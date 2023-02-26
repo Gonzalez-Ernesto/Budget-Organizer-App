@@ -1,3 +1,51 @@
+#*******************************GRAPHIC USER INTERFACE*******************
+import sys
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
+
+
+class App_Window(QMainWindow):
+    def __init__(self):
+        super(App_Window, self).__init__()
+        self.setGeometry(300,300, 600, 600)
+        self.setWindowTitle('Budget Organizer')
+        create_user()
+        self.initUI()
+        self.show()
+
+    def initUI(self):
+        #*************************BUTTONS**********************************
+        # create sign up button
+        def create_user(self):
+            sign_up = QtWidgets.QPushButton(self)
+            sign_up.setText('Create Account')
+            sign_up.clicked.connect()
+
+
+            Username = QtWidgets.QtWidgets.QLineEdit(self)
+            Username.setObjectName('User Name')
+            
+            label = QtWidgets.QLabel(Username)
+            label.move(50, 50)
+
+        #*************************LABELS*************************************
+        
+        #label.setText('Trial')
+        #
+        
+
+            
+def AppBox():
+# creating main window
+    Budget_app = QApplication(sys.argv)
+    Budget_win = App_Window()
+    
+    
+    
+    sys.exit(Budget_app.exec())
+
+
+
 #-----------creating user----------------------------------------------------------
 def create_user():
     """This function creates a new user"""
@@ -143,52 +191,8 @@ def mortgage( loan_amount,anual_interest_rate, years,home_value = 0, is_morgatge
     return round(Monthly,2)
 
 #----------------Testing Functions-------------------------------
-import sys
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
-
+AppBox()
 
 # creating a list to store dependents CAUTION !!!! global variable
 dependet_list = []
 
-#adding two dependents to test functions
-dependent(4)
-dependent(5)
-
-# trying morgtgage function in morgatge mode
-payment = mortgage(140000, 4.87, 30, 140000, True )
-print(payment)
-
-# Trying morgatge function in carloan mode
-payment = mortgage(14000, 4.87, 5, is_morgatge = False, is_carLoan = True )
-print(payment)
-
-
-# Testing income function
-real_income = income(28, 160)
-print(real_income)
-
-
-#testing coder_decoder
-string = "Ernesto Gonzalez"
-coded =''
-decoded = ''
-
-for character in string:
-    coded += coder_decoder(character)
-
-#output encoded str
-print(coded)
-
-for character in coded:
-    decoded += coder_decoder(character, True)
-
-# output decoded str
-print(decoded)
-
-
-#creating user name
-name, passw = create_user()
-
-print(name)
-print(passw)
