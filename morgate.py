@@ -1,3 +1,30 @@
+
+
+#-----------coder-Decoder-----------------------------------------------------------
+def coder_decoder(character, decoder = False):
+    """This function encode and decode a single character using its ancii value"""
+
+    
+    # code will be return for encoding before writing in the file
+    #decode will be return when reading from file
+    if ord(character) < 128:
+        code = ord(character) + 128
+        decode = ord(character) + 128
+    else:
+        code = ord(character) - 128
+        decode = ord(character) - 128
+    
+    #selecting return value 
+    if decoder:
+        return chr(decode)
+    return chr(code)
+
+
+
+
+
+#------------Math functions-----------------------------------------------------------
+
 def dependent(age):
     """This function save a new dependent into a dependent's list"""
 
@@ -124,3 +151,21 @@ print(payment)
 # Testing income function
 real_income = income(28, 160)
 print(real_income)
+
+
+#testing coder_decoder
+string = "Ernesto Gonzalez"
+coded =''
+decoded = ''
+
+for character in string:
+    coded += coder_decoder(character)
+
+#output encoded str
+print(coded)
+
+for character in coded:
+    decoded += coder_decoder(character, True)
+
+# output decoded str
+print(decoded)
