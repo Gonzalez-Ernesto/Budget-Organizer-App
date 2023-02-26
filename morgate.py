@@ -9,24 +9,24 @@ class App_Window(QMainWindow):
         super(App_Window, self).__init__()
         self.setGeometry(300,300, 600, 600)
         self.setWindowTitle('Budget Organizer')
-        create_user()
+        add_user()
         self.initUI()
         self.show()
 
     def initUI(self):
-        #*************************BUTTONS**********************************
+    #*************************BUTTONS**********************************
         # create sign up button
-        def create_user(self):
-            sign_up = QtWidgets.QPushButton(self)
-            sign_up.setText('Create Account')
-            sign_up.clicked.connect()
+    def add_user(self):
+        sign_up = QtWidgets.QPushButton(self)
+        sign_up.setText('Create Account')
+        sign_up.clicked.connect()
 
 
-            Username = QtWidgets.QtWidgets.QLineEdit(self)
-            Username.setObjectName('User Name')
+        Username = QtWidgets.QtWidgets.QLineEdit(self)
+        Username.setObjectName('User Name')
             
-            label = QtWidgets.QLabel(Username)
-            label.move(50, 50)
+        label = QtWidgets.QLabel(Username)
+        label.move(50, 50)
 
         #*************************LABELS*************************************
         
