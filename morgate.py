@@ -1,4 +1,17 @@
+#-----------creating user----------------------------------------------------------
+def create_user():
+    """This function creates a new user"""
 
+    new_user = input('Entert the desired username(13 character max): ')
+    do_not_match = False
+    while not do_not_match:
+        password = input("Please enter desire password(13 character max): ")
+        again = input(" Re-enter desire password: ")
+        if password == again:
+            do_not_match = True
+        else:
+            print('The entries do not match, try again\n')
+    return new_user, password
 
 #-----------coder-Decoder-----------------------------------------------------------
 def coder_decoder(character, decoder = False):
@@ -130,6 +143,9 @@ def mortgage( loan_amount,anual_interest_rate, years,home_value = 0, is_morgatge
     return round(Monthly,2)
 
 #----------------Testing Functions-------------------------------
+import sys
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
 
 
 # creating a list to store dependents CAUTION !!!! global variable
@@ -169,3 +185,10 @@ for character in coded:
 
 # output decoded str
 print(decoded)
+
+
+#creating user name
+name, passw = create_user()
+
+print(name)
+print(passw)
