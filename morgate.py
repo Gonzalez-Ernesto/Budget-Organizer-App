@@ -1,44 +1,123 @@
 #*******************************GRAPHIC USER INTERFACE*******************
 import sys
 from PyQt5 import QtWidgets
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-
-class App_Window(QMainWindow):
-    def __init__(self):
-        super(App_Window, self).__init__()
+class App_Window(QtWidgets.QWidget):
+    def __init__(self, * args, ** kwargs):
+        super().__init__(* args, ** kwargs)
         self.setGeometry(300,300, 600, 600)
         self.setWindowTitle('Budget Organizer')
-        add_user()
-        self.initUI()
+        self.User_box()
         self.show()
 
+    
     def initUI(self):
-    #*************************BUTTONS**********************************
-        # create sign up button
-    def add_user(self):
         sign_up = QtWidgets.QPushButton(self)
         sign_up.setText('Create Account')
-        sign_up.clicked.connect()
-
-
-        Username = QtWidgets.QtWidgets.QLineEdit(self)
-        Username.setObjectName('User Name')
-            
-        label = QtWidgets.QLabel(Username)
-        label.move(50, 50)
-
-        #*************************LABELS*************************************
+        sign_up.adjustSize()
+        sign_up.move(100, 170)
+        sign_up.clicked.connect(self.User_box) 
         
-        #label.setText('Trial')
-        #
+    
+        
+ #---------------creating user name instance------------------------       
+class User_box(QtWidgets.QWidget):
+    """This function creates a new user"""
+
+    def __init__(self, * args, ** kwargs):
+        super().__init__(* args, ** kwargs)
+        self.setGeometry(300,300, 600, 600)
+        self.setWindowTitle('Create user')
+
+        # user label
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(40, 50)
+        self.user.setText('User name:')
+        
+        # user label top
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(135, 20)
+        self.user.setText('Entert the desired username(13 character max)')
+        self.user.adjustSize()
+
+        # user lineedit
+        self.Username = QtWidgets.QLineEdit(self)
+        self.Username.setObjectName('User Name')
+        self.Username.move(135, 50)
+
+        # password label
+        self.psswd = QtWidgets.QLabel(self)
+        self.psswd.move(40, 130)
+        self.psswd.setText('Password:')
+
+        # password label top
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(135, 90)
+        self.user.setText('Entert the desired password(13 character max)')
+        self.user.adjustSize()
+        
+        # password line edit
+        self.Password = QtWidgets.QLineEdit(self)
+        self.Password.setObjectName('Password')
+        self.Password.setEchoMode(2)
+        self.Password.move(135, 130)
+
+        # 2nd password label
+        self.psswd2 = QtWidgets.QLabel(self)
+        self.psswd2.move(40, 210)
+        self.psswd2.setText('Re-enter Password:')
+
+        # password label top
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(135, 170)
+        self.user.setText('Re-enter desired password')
+        self.user.adjustSize()
+
+        # 2nd password line edit
+        self.Re_enterpassword = QtWidgets.QLineEdit(self)
+        self.Re_enterpassword.setObjectName('Re_Enter')
+        self.Re_enterpassword.setEchoMode(2)
+        self.Re_enterpassword.move(135, 210)
         
 
+        
+        # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('Accept')
+        self.accept.move(100, 250)
+        self.accept.clicked.connect(self.saving_name)
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Cancel')
+        self.cancel.move(180, 250)
+        self.cancel.clicked.connect(self.close)
+        
+
+        
+        # showing the window
+        self.show()
+         
+        
+    def saving_name(self):
+        userName = self.Username.text()    
+        if len(userName) > 13:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'username is too long')
+            self.close()
+
+
+
+
+        
+#********************CREATING THE APP*********************************
             
 def AppBox():
-# creating main window
+    # creating main window
     Budget_app = QApplication(sys.argv)
-    Budget_win = App_Window()
+    Budget_win = User_box()
+    
     
     
     
@@ -48,19 +127,23 @@ def AppBox():
 
 #-----------creating user----------------------------------------------------------
 def create_user():
-    """This function creates a new user"""
+    """"""
+    #defining objects of the window function
 
-    new_user = input('Entert the desired username(13 character max): ')
+    
+
+    
+    new_user = input(': ')
     do_not_match = False
     while not do_not_match:
         password = input("Please enter desire password(13 character max): ")
-        again = input(" Re-enter desire password: ")
+        again = input(" : ")
         if password == again:
             do_not_match = True
         else:
             print('The entries do not match, try again\n')
     return new_user, password
-
+    sys.exit(Budget_app.exec())
 #-----------coder-Decoder-----------------------------------------------------------
 def coder_decoder(character, decoder = False):
     """This function encode and decode a single character using its ancii value"""
@@ -196,3 +279,44 @@ AppBox()
 # creating a list to store dependents CAUTION !!!! global variable
 dependet_list = []
 
+ #adding two dependents to test functions
+dependent(4)
+dependent(5)
+
+# trying morgtgage function in morgatge mode
+payment = mortgage(140000, 4.87, 30, 140000, True )
+print(payment)
+
+# Trying morgatge function in carloan mode
+payment = mortgage(14000, 4.87, 5, is_morgatge = False, is_carLoan = True )
+print(payment)
+
+
+# Testing income function
+real_income = income(28, 160)
+print(real_income)
+
+
+#testing coder_decoder
+string = "Ernesto Gonzalez"
+coded =''
+decoded = ''
+
+for character in string:
+    coded += coder_decoder(character)
+
+#output encoded str
+print(coded)
+
+for character in coded:
+    decoded += coder_decoder(character, True)
+
+# output decoded str
+print(decoded)
+
+
+#creating user name
+name, passw = create_user()
+
+print(name)
+print(passw)
