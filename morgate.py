@@ -9,22 +9,36 @@ class App_Window(QtWidgets.QWidget):
         super().__init__(* args, ** kwargs)
         self.setGeometry(300,300, 600, 600)
         self.setWindowTitle('Budget Organizer')
-        self.User_box()
+        
+        self.sign_up = QtWidgets.QPushButton(self)
+        self.sign_up.setText('Create Account')
+        self.sign_up.adjustSize()
+        self.sign_up.move(100, 170)
+        self.sign_up.clicked.connect(self.signup)
+
+        self.sign_in = QtWidgets.QPushButton(self)
+        self.sign_in.setText('Login')
+        self.sign_in.adjustSize()
+        self.sign_in.move(200, 170)
+        self.sign_in.clicked.connect(self.close) 
+
+        self.Exit = QtWidgets.QPushButton(self)
+        self.Exit.setText('Exit')
+        self.Exit.adjustSize()
+        self.Exit.move(300, 170)
+        self.Exit.clicked.connect(self.close)  
+        
         self.show()
 
-    
-    def initUI(self):
-        sign_up = QtWidgets.QPushButton(self)
-        sign_up.setText('Create Account')
-        sign_up.adjustSize()
-        sign_up.move(100, 170)
-        sign_up.clicked.connect(self.User_box) 
+    def signup(self):
+        self.CreateUser = User_box()
+        self.CreateUser.show()
+        self.close()
+
         
-    
-        
- #---------------creating user name instance------------------------       
+ #************ADD_USER_WINDOW*********COMPLETED******************       
 class User_box(QtWidgets.QWidget):
-    """This function creates a new user"""
+    """This class creates a new user"""
 
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
@@ -39,7 +53,7 @@ class User_box(QtWidgets.QWidget):
         # user label top
         self.user = QtWidgets.QLabel(self)
         self.user.move(135, 20)
-        self.user.setText('Entert the desired username(13 character max)')
+        self.user.setText('Entert the desired username(14 character max)')
         self.user.adjustSize()
 
         # user lineedit
@@ -55,7 +69,7 @@ class User_box(QtWidgets.QWidget):
         # password label top
         self.user = QtWidgets.QLabel(self)
         self.user.move(135, 90)
-        self.user.setText('Entert the desired password(13 character max)')
+        self.user.setText('Entert the desired password(14 character max)')
         self.user.adjustSize()
         
         # password line edit
@@ -102,42 +116,105 @@ class User_box(QtWidgets.QWidget):
          
         
     def saving_name(self):
+        """This function process all entered information and writes it on a file"""
+        
+        # these varaiables store teh inputs
         userName = self.Username.text()
         password = self.Password.text()
-        password2 = self.Re_enterpassword.text()  
-        if len(userName) > 15:
+        password2 = self.Re_enterpassword.text() 
+
+        # if-elif-else selection to process the input
+        if len(userName) > 14:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username is too long')
+
+        elif len(userName) < 5:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Username of at least 5 characters')
+
         elif password == '' or len(password) < 5:
-             QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Password of at least 5 characters')
-        elif len(password) > 15:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Password of at least 5 characters')
+
+        elif len(password) > 14:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Password is too long')
+
         elif  password != password2:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Passwords do ot match')
+
         else:
             encodedUser = ''
+            encodedPassword = ''
             for character in userName:
                 encodedUser += coder_decoder(character)    
-                
+            for character in password:
+                encodedPassword += coder_decoder(character)    
+            
+            encodedUser += (15 - len(encodedUser)) * ' '
+            encodedPassword += (15 - len(encodedPassword)) * ' '
 
             with open('Data_base', 'a+') as  DB:
                 DB.write(encodedUser)
+                DB.seek(15)
+                DB.write(encodedPassword)
 
             QtWidgets.QMessageBox.information(self, 'Sucess', 'your information was saved')
             self.close()
+            self.addFinance()
 
+    def addFinance(self):
+        self.Finances = Financial_box()
+        self.Finances.show()
+
+
+        
+ #************ADD_FINANCE_WINDOW***************************       
+class Financial_box(QtWidgets.QWidget):
+    """This class adds financial information """
+
+    def __init__(self, * args, ** kwargs):
+        super().__init__(* args, ** kwargs)
+        self.setGeometry(300,300, 600, 600)
+        self.setWindowTitle('Add Financial information')  
+
+        # user label
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(40, 50)
+        self.user.setText('User name:')
+        
+        # user label top
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(135, 20)
+        self.user.setText('Entert the desired username(14 character max)')
+        self.user.adjustSize()
+
+        # user lineedit
+        self.Username = QtWidgets.QLineEdit(self)
+        self.Username.setObjectName('User Name')
+        self.Username.move(135, 50)
         
         
         
+        
+        
+        
+        # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('Accept')
+        self.accept.move(100, 550)
+        self.accept.clicked.connect(self.close)
 
-
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Cancel')
+        self.cancel.move(500, 550)
+        self.cancel.clicked.connect(self.close)
+        self.show()
 
         
 #********************CREATING THE APP*********************************
             
 def AppBox():
     # creating main window
-    Budget_app = QApplication(sys.argv)
-    Budget_win = User_box()
+    Budget_app =  QApplication(sys.argv)
+    Main_Window = App_Window()
     
     
     
@@ -145,26 +222,6 @@ def AppBox():
     sys.exit(Budget_app.exec())
 
 
-
-#-----------creating user----------------------------------------------------------
-def create_user():
-    """"""
-    #defining objects of the window function
-
-    
-
-    
-    new_user = input(': ')
-    do_not_match = False
-    while not do_not_match:
-        password = input("Please enter desire password(13 character max): ")
-        again = input(" : ")
-        if password == again:
-            do_not_match = True
-        else:
-            print('The entries do not match, try again\n')
-    return new_user, password
-    sys.exit(Budget_app.exec())
 #-----------coder-Decoder-----------------------------------------------------------
 def coder_decoder(character, decoder = False):
     """This function encode and decode a single character using its ancii value"""
