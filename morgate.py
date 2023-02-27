@@ -102,11 +102,32 @@ class User_box(QtWidgets.QWidget):
          
         
     def saving_name(self):
-        userName = self.Username.text()    
-        if len(userName) > 13:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'username is too long')
+        userName = self.Username.text()
+        password = self.Password.text()
+        password2 = self.Re_enterpassword.text()  
+        if len(userName) > 15:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username is too long')
+        elif password == '' or len(password) < 5:
+             QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Password of at least 5 characters')
+        elif len(password) > 15:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Password is too long')
+        elif  password != password2:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Passwords do ot match')
+        else:
+            encodedUser = ''
+            for character in userName:
+                encodedUser += coder_decoder(character)    
+                
+
+            with open('Data_base', 'a+') as  DB:
+                DB.write(encodedUser)
+
+            QtWidgets.QMessageBox.information(self, 'Sucess', 'your information was saved')
             self.close()
 
+        
+        
+        
 
 
 
