@@ -20,7 +20,7 @@ class App_Window(QtWidgets.QWidget):
         self.sign_in.setText('Login')
         self.sign_in.adjustSize()
         self.sign_in.move(200, 170)
-        self.sign_in.clicked.connect(self.close) 
+        self.sign_in.clicked.connect(self.login) 
 
         self.Exit = QtWidgets.QPushButton(self)
         self.Exit.setText('Exit')
@@ -33,6 +33,11 @@ class App_Window(QtWidgets.QWidget):
     def signup(self):
         self.CreateUser = User_box()
         self.CreateUser.show()
+        self.close()
+
+    def login(self):
+        self.log = Login_box()
+        self.log.show()
         self.close()
 
         
@@ -107,13 +112,19 @@ class User_box(QtWidgets.QWidget):
         self.cancel = QtWidgets.QPushButton(self)
         self.cancel.setText('Cancel')
         self.cancel.move(180, 250)
-        self.cancel.clicked.connect(self.close)
+        self.cancel.clicked.connect(self.mainWin)
         
 
         
         # showing the window
         self.show()
-         
+
+    # returns tu main window    
+    def mainWin(self):
+        self.Main_Window = App_Window()
+        self.Main_Window.show()
+        self.close()
+
         
     def saving_name(self):
         """This function process all entered information and writes it on a file"""
@@ -163,11 +174,105 @@ class User_box(QtWidgets.QWidget):
         self.Finances = Financial_box()
         self.Finances.show()
 
+    
+#************LOGIN_WINDOW***************************       
+class Login_box(QtWidgets.QWidget):
+    """This window allows the usser to log in """
 
+    def __init__(self, * args, ** kwargs):
+        super().__init__(* args, ** kwargs)
+        self.setGeometry(300,300, 600, 600)
+        self.setWindowTitle('Add Financial information')
+    
+        # user label
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(40, 50)
+        self.user.setText('User name:')
         
- #************ADD_FINANCE_WINDOW***************************       
+        # user label top
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(135, 20)
+        self.user.setText('Enter username')
+        self.user.adjustSize()
+
+        # user lineedit
+        self.Username = QtWidgets.QLineEdit(self)
+        self.Username.setObjectName('User Name')
+        self.Username.move(135, 50)
+
+        # password label
+        self.psswd = QtWidgets.QLabel(self)
+        self.psswd.move(40, 130)
+        self.psswd.setText('Password:')
+
+        # password label top
+        self.user = QtWidgets.QLabel(self)
+        self.user.move(135, 90)
+        self.user.setText('Enter password')
+        self.user.adjustSize()
+        
+        # password line edit
+        self.Password = QtWidgets.QLineEdit(self)
+        self.Password.setObjectName('Password')
+        self.Password.setEchoMode(2)
+        self.Password.move(135, 130)
+
+        # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('Accept')
+        self.accept.move(100, 250)
+        self.accept.clicked.connect(self.logging)
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Cancel')
+        self.cancel.move(180, 250)
+        self.cancel.clicked.connect(self.mainWin)
+        
+        # showing the window
+        self.show()
+    
+    # returns tu main window    
+    def mainWin(self):
+        self.Main_Window = App_Window()
+        self.Main_Window.show()
+        self.close()
+
+    # search for the user
+    def logging(self):
+        """This function analyses the input from user"""
+
+        userName = self.Username.text()
+        password = self.Password.text()
+
+        Logged = False
+        decodedUser = ''
+        decodedPassword = ''
+        info = []
+        with open('Data_base', 'r') as DB:
+            for line in DB:
+                info = line.split()
+                
+                for character in info[0]:
+                    decodedUser += coder_decoder(character)
+
+                for character in info[1]:
+                    decodedPassword += coder_decoder(character)
+
+                if (userName == decodedUser and  password == decodedPassword):
+                    Logged = True
+
+            if Logged:
+                QtWidgets.QMessageBox.information(self, 'Sucess', 'you are logged in')
+                self.close()
+            else:
+                QtWidgets.QMessageBox.critical(self, 'Try Again', 'Wrong User or Passwords ')    
+
+   
+        
+#************ADD_FINANCE_WINDOW***************************       
 class Financial_box(QtWidgets.QWidget):
-    """This class adds financial information """
+    """This window adds financial information """
 
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
