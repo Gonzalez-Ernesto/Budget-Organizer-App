@@ -1,5 +1,5 @@
 #*******************************GRAPHIC USER INTERFACE*******************
-import sys
+import sys , random
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -124,18 +124,42 @@ class User_box(QtWidgets.QWidget):
         self.Main_Window = App_Window()
         self.Main_Window.show()
         self.close()
-
+    
+    # redirect to log in window
+    def login(self):
+        self.log = Login_box()
+        self.log.show()
+        self.close()
         
     def saving_name(self):
         """This function process all entered information and writes it on a file"""
         
-        # these varaiables store teh inputs
+        # these varaiables store the inputs
         userName = self.Username.text()
         password = self.Password.text()
         password2 = self.Re_enterpassword.text() 
+        
+        taken = False
+        decodedUser = ''
+
+        with open('Data_base', 'r') as DB:
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+                for character in info[0]:
+                    decodedUser += coder_decoder(character)
+
+                if userName == decodedUser:
+                    taken = True
+        
+            DB.close()
+
 
         # if-elif-else selection to process the input
-        if len(userName) > 14:
+        if taken:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username already taken')    
+        elif len(userName) > 14:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username is too long')
 
         elif len(userName) < 5:
@@ -160,20 +184,21 @@ class User_box(QtWidgets.QWidget):
             
             encodedUser += (15 - len(encodedUser)) * ' '
             encodedPassword += (15 - len(encodedPassword)) * ' '
+            
 
             with open('Data_base', 'a+') as  DB:
                 DB.write(encodedUser)
                 DB.seek(15)
                 DB.write(encodedPassword)
-
+                for input in range(4):
+                    DB.write(coder_decoder('0') + ' ')
+                DB.write('[] ')           
+                DB.write('\n')
+                DB.close()
             QtWidgets.QMessageBox.information(self, 'Sucess', 'your information was saved')
             self.close()
-            self.addFinance()
-
-    def addFinance(self):
-        self.Finances = Financial_box()
-        self.Finances.show()
-
+            self.login()
+           
     
 #************LOGIN_WINDOW***************************       
 class Login_box(QtWidgets.QWidget):
@@ -182,7 +207,7 @@ class Login_box(QtWidgets.QWidget):
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
         self.setGeometry(300,300, 600, 600)
-        self.setWindowTitle('Add Financial information')
+        self.setWindowTitle('Login')
     
         # user label
         self.user = QtWidgets.QLabel(self)
@@ -250,9 +275,11 @@ class Login_box(QtWidgets.QWidget):
         decodedPassword = ''
         info = []
         with open('Data_base', 'r') as DB:
+            DB.seek(0)
             for line in DB:
                 info = line.split()
-                
+                if len(info) == 0:
+                    continue
                 for character in info[0]:
                     decodedUser += coder_decoder(character)
 
@@ -260,58 +287,172 @@ class Login_box(QtWidgets.QWidget):
                     decodedPassword += coder_decoder(character)
 
                 if (userName == decodedUser and  password == decodedPassword):
+                    self.finacial_list = line.split()
                     Logged = True
 
             if Logged:
                 QtWidgets.QMessageBox.information(self, 'Sucess', 'you are logged in')
                 self.close()
+                self.addFinance()
+
             else:
                 QtWidgets.QMessageBox.critical(self, 'Try Again', 'Wrong User or Passwords ')    
+    
+    def addFinance(self):
+        self.Finances = Financial_box(self.finacial_list)
+        self.Finances.show()
 
    
         
-#************ADD_FINANCE_WINDOW***************************       
+#************FINANCE_WINDOW***************************       
 class Financial_box(QtWidgets.QWidget):
     """This window adds financial information """
-
-    def __init__(self, * args, ** kwargs):
-        super().__init__(* args, ** kwargs)
+    
+    def __init__(self, finacial_list):
+        super().__init__()
         self.setGeometry(300,300, 600, 600)
         self.setWindowTitle('Add Financial information')  
 
-        # user label
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(40, 50)
-        self.user.setText('User name:')
-        
-        # user label top
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(135, 20)
-        self.user.setText('Entert the desired username(14 character max)')
-        self.user.adjustSize()
+        #fiancial variables
+        self.user = finacial_list[0]
+        self.income = float(decode_string(finacial_list[2]))
+        self.assets = float(decode_string(finacial_list[3]))
+        self.transportation = float(decode_string(finacial_list[4]))
+        self.housing = float(decode_string(finacial_list[5]))
+        self.dependents = finacial_list[6]
+                                    
+        # income label 
+        self.income_label = QtWidgets.QLabel(self)
+        self.income_label.move(40, 50)
+        self.income_label.setText(f'Monthly income: {self.income} ')
 
-        # user lineedit
-        self.Username = QtWidgets.QLineEdit(self)
-        self.Username.setObjectName('User Name')
-        self.Username.move(135, 50)
+        # asset label 
+        self.asset_label = QtWidgets.QLabel(self)
+        self.asset_label.move(250, 50)
+        self.asset_label.setText(f'Total assets: {self.assets}')
+
+        # transportation label 
+        self.transportation_label = QtWidgets.QLabel(self)
+        self.transportation_label.move(40, 80)
+        self.transportation_label.setText(f'Monthly transportation expenses: {self.transportation}')
+
+        # housing label 
+        self.housing_label = QtWidgets.QLabel(self)
+        self.housing_label.move(250, 80)
+        self.housing_label.setText(f'Monthly housing expenses: {self.housing}')
+
+        # dependent label 1
+        self.dependent_label = QtWidgets.QLabel(self)
+        self.dependent_label.move(40, 120)
+        self.dependent_label.setText(f'Dependents: {self.dependents}')
+         
+        # add assets button
+        self.assets_button = QtWidgets.QPushButton(self)
+        self.assets_button.setText('Assets')
+        self.assets_button.move(50, 300)
+        self.assets_button.clicked.connect(self.close)
+
+        # add dependents button
+        self.dependents_button = QtWidgets.QPushButton(self)
+        self.dependents_button.setText('Dependants')
+        self.dependents_button.move(50, 400)
+        self.dependents_button.clicked.connect(self.close)
+        
+        # add income button
+        self.income_button = QtWidgets.QPushButton(self)
+        self.income_button.setText('Income')
+        self.income_button.move(250, 300)
+        self.income_button.clicked.connect(self.add_income_window)
+
+        # add transportation expenses button
+        self.transportation_button = QtWidgets.QPushButton(self)
+        self.transportation_button.setText('Transportation')
+        self.transportation_button.move(250, 400)
+        self.transportation_button.clicked.connect(self.close)
         
         
-        
-        
-        
-        
+        # add housing expenses button
+        self.housing_button = QtWidgets.QPushButton(self)
+        self.housing_button.setText('Housing')
+        self.housing_button.move(450, 400)
+        self.housing_button.clicked.connect(self.close)
+
         # accept button
         self.accept = QtWidgets.QPushButton(self)
-        self.accept.setText('Accept')
+        self.accept.setText('Log out')
         self.accept.move(100, 550)
         self.accept.clicked.connect(self.close)
 
+
         # cancel button
         self.cancel = QtWidgets.QPushButton(self)
-        self.cancel.setText('Cancel')
+        self.cancel.setText('Exit')
         self.cancel.move(500, 550)
         self.cancel.clicked.connect(self.close)
         self.show()
+
+    def add_income_window(self):
+        """creates aan object type add_income"""
+        self.income_window = add_income(self.income)
+        self.income_window.show()
+
+#//////////////////SUBWINDOWS OF ADD FINANCE//////////////////////
+class add_income(QtWidgets.QWidget):
+    def __init__(self, userIncome):
+        super().__init__()
+        self.setGeometry(600,600, 400, 200)
+        self.setWindowTitle('Add Financial information')
+        
+        # income label 
+        self.income_label = QtWidgets.QLabel(self)
+        self.income_label.move(40, 50)
+        self.income_label.setText('Enter your hourly rate and number of hours per month:')
+
+        # rate label
+        self.rate_label = QtWidgets.QLabel(self)
+        self.rate_label.move(40, 80)
+        self.rate_label.setText('Hourly rate:')
+        
+        # rate line edit
+        self.rate_line = QtWidgets.QLineEdit(self)
+        self.rate_line.setObjectName('rate')
+        self.rate_line.move(135, 80)
+
+        # hours label
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 120)
+        self.hours_label.setText('Hourly rate:')
+        
+        # hours line edit
+        self.hours_line = QtWidgets.QLineEdit(self)
+        self.hours_line.setObjectName('rate')
+        self.hours_line.move(135, 120)
+
+         # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('Log out')
+        self.accept.move(40, 160)
+        self.accept.clicked.connect(self.close)
+
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Exit')
+        self.cancel.move(135, 160)
+        self.cancel.clicked.connect(self.close)
+        
+        self.show()
+
+        print(repr(self.rate_line.text()))
+
+        #userIncome = income(int(self.rate_line.text()),int(self.hours_line.text()))
+        
+
+         
+
+
+        
+
 
         
 #********************CREATING THE APP*********************************
@@ -346,16 +487,20 @@ def coder_decoder(character, decoder = False):
         return chr(decode)
     return chr(code)
 
+# -----------------------decoding string---------------------------------------------
+def decode_string(string):
+    """This function decodes a string using coder_decoder function"""
+    decoded = ''
+    for char in string:
+        decoded += coder_decoder(char)
 
-
-
-
+    return decoded
 #------------Math functions-----------------------------------------------------------
 
 def dependent(age):
     """This function save a new dependent into a dependent's list"""
 
-    dependet_list.append(age)
+    dependent_list.append(age)
 
     return
 
@@ -393,7 +538,7 @@ def income(hourly_rate, monthly_hours, house_hold = True):
     # no data for other income brakets, amount was proportionaly ajusted
     expenditure_per_child = (y_income  / 107400) * 12980
 
-    for child in dependet_list:
+    for child in dependent_list:
         if child <= 17:
             y_income = y_income - expenditure_per_child     
 
@@ -457,49 +602,7 @@ def mortgage( loan_amount,anual_interest_rate, years,home_value = 0, is_morgatge
     return round(Monthly,2)
 
 #----------------Testing Functions-------------------------------
+dependent_list = []
+
 AppBox()
 
-# creating a list to store dependents CAUTION !!!! global variable
-dependet_list = []
-
- #adding two dependents to test functions
-dependent(4)
-dependent(5)
-
-# trying morgtgage function in morgatge mode
-payment = mortgage(140000, 4.87, 30, 140000, True )
-print(payment)
-
-# Trying morgatge function in carloan mode
-payment = mortgage(14000, 4.87, 5, is_morgatge = False, is_carLoan = True )
-print(payment)
-
-
-# Testing income function
-real_income = income(28, 160)
-print(real_income)
-
-
-#testing coder_decoder
-string = "Ernesto Gonzalez"
-coded =''
-decoded = ''
-
-for character in string:
-    coded += coder_decoder(character)
-
-#output encoded str
-print(coded)
-
-for character in coded:
-    decoded += coder_decoder(character, True)
-
-# output decoded str
-print(decoded)
-
-
-#creating user name
-name, passw = create_user()
-
-print(name)
-print(passw)
