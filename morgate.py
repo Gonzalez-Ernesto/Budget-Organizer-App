@@ -142,15 +142,14 @@ class User_box(QtWidgets.QWidget):
         taken = False
         decodedUser = ''
 
-        with open('Data_base', 'r') as DB:
+        with open('Data_base', 'a+') as DB:
+            DB.seek(0)
             for line in DB:
                 info = line.split()
                 if len(info) == 0:
                     continue
-                for character in info[0]:
-                    decodedUser += coder_decoder(character)
 
-                if userName == decodedUser:
+                if userName == decode_string(info[0]):
                     taken = True
         
             DB.close()
@@ -267,39 +266,17 @@ class Login_box(QtWidgets.QWidget):
     def logging(self):
         """This function analyses the input from user"""
 
-        userName = self.Username.text()
-        password = self.Password.text()
-
-        Logged = False
-        decodedUser = ''
-        decodedPassword = ''
-        info = []
-        with open('Data_base', 'r') as DB:
-            DB.seek(0)
-            for line in DB:
-                info = line.split()
-                if len(info) == 0:
-                    continue
-                for character in info[0]:
-                    decodedUser += coder_decoder(character)
-
-                for character in info[1]:
-                    decodedPassword += coder_decoder(character)
-
-                if (userName == decodedUser and  password == decodedPassword):
-                    self.finacial_list = line.split()
-                    Logged = True
-
-            if Logged:
+       
+        if  info_Loader(self.Username.text(), self.Password.text()):
                 QtWidgets.QMessageBox.information(self, 'Sucess', 'you are logged in')
                 self.close()
                 self.addFinance()
 
-            else:
+        else:
                 QtWidgets.QMessageBox.critical(self, 'Try Again', 'Wrong User or Passwords ')    
     
     def addFinance(self):
-        self.Finances = Financial_box(self.finacial_list)
+        self.Finances = Financial_box()
         self.Finances.show()
 
    
@@ -308,43 +285,37 @@ class Login_box(QtWidgets.QWidget):
 class Financial_box(QtWidgets.QWidget):
     """This window adds financial information """
     
-    def __init__(self, finacial_list):
+    def __init__(self):
         super().__init__()
         self.setGeometry(300,300, 600, 600)
         self.setWindowTitle('Add Financial information')  
 
-        #fiancial variables
-        self.user = finacial_list[0]
-        self.income = float(decode_string(finacial_list[2]))
-        self.assets = float(decode_string(finacial_list[3]))
-        self.transportation = float(decode_string(finacial_list[4]))
-        self.housing = float(decode_string(finacial_list[5]))
-        self.dependents = finacial_list[6]
-                                    
-        # income label 
+        info_Loader(Username, Password)
+
+        # income label
         self.income_label = QtWidgets.QLabel(self)
         self.income_label.move(40, 50)
-        self.income_label.setText(f'Monthly income: {self.income} ')
+        self.income_label.setText(f'Monthly income: {Monthly_Income} ')
 
         # asset label 
         self.asset_label = QtWidgets.QLabel(self)
         self.asset_label.move(250, 50)
-        self.asset_label.setText(f'Total assets: {self.assets}')
+        self.asset_label.setText(f'Total assets: {Total_assets}')
 
         # transportation label 
         self.transportation_label = QtWidgets.QLabel(self)
         self.transportation_label.move(40, 80)
-        self.transportation_label.setText(f'Monthly transportation expenses: {self.transportation}')
+        self.transportation_label.setText(f'Monthly transportation expenses: {Monthly_transportation_expenses}')
 
         # housing label 
         self.housing_label = QtWidgets.QLabel(self)
         self.housing_label.move(250, 80)
-        self.housing_label.setText(f'Monthly housing expenses: {self.housing}')
+        self.housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
 
         # dependent label 1
         self.dependent_label = QtWidgets.QLabel(self)
         self.dependent_label.move(40, 120)
-        self.dependent_label.setText(f'Dependents: {self.dependents}')
+        self.dependent_label.setText(f'Dependents: {dependent_list}')
          
         # add assets button
         self.assets_button = QtWidgets.QPushButton(self)
@@ -393,20 +364,26 @@ class Financial_box(QtWidgets.QWidget):
 
     def add_income_window(self):
         """creates aan object type add_income"""
-        self.income_window = add_income(self.income)
+        self.close()
+        self.income_window = add_income()
         self.income_window.show()
 
 #//////////////////SUBWINDOWS OF ADD FINANCE//////////////////////
+
+
+
+
+#//////////////////SUBWINDOWS OF ADD FINANCE//////////////////////
 class add_income(QtWidgets.QWidget):
-    def __init__(self, userIncome):
+    def __init__(self):
         super().__init__()
-        self.setGeometry(600,600, 400, 200)
+        self.setGeometry(600, 600, 400, 200)
         self.setWindowTitle('Add Financial information')
         
         # income label 
-        self.income_label = QtWidgets.QLabel(self)
-        self.income_label.move(40, 50)
-        self.income_label.setText('Enter your hourly rate and number of hours per month:')
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 50)
+        self.hours_label.setText('Enter your hourly rate and number of hours per month:')
 
         # rate label
         self.rate_label = QtWidgets.QLabel(self)
@@ -421,7 +398,7 @@ class add_income(QtWidgets.QWidget):
         # hours label
         self.hours_label = QtWidgets.QLabel(self)
         self.hours_label.move(40, 120)
-        self.hours_label.setText('Hourly rate:')
+        self.hours_label.setText('Hours per week:')
         
         # hours line edit
         self.hours_line = QtWidgets.QLineEdit(self)
@@ -430,9 +407,9 @@ class add_income(QtWidgets.QWidget):
 
          # accept button
         self.accept = QtWidgets.QPushButton(self)
-        self.accept.setText('Log out')
+        self.accept.setText('accept')
         self.accept.move(40, 160)
-        self.accept.clicked.connect(self.close)
+        self.accept.clicked.connect(self.updatingIncome)
 
 
         # cancel button
@@ -445,14 +422,16 @@ class add_income(QtWidgets.QWidget):
 
         print(repr(self.rate_line.text()))
 
-        #userIncome = income(int(self.rate_line.text()),int(self.hours_line.text()))
         
-
-         
-
-
+    def updatingIncome(self):
+        """This function updates the total income passing the entered information to teh function income"""
         
-
+        global Monthly_Income
+        Monthly_Income = income(float(self.rate_line.text()),float(self.hours_line.text()))
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
 
         
 #********************CREATING THE APP*********************************
@@ -469,22 +448,18 @@ def AppBox():
 
 
 #-----------coder-Decoder-----------------------------------------------------------
-def coder_decoder(character, decoder = False):
+def coder_decoder(character):
     """This function encode and decode a single character using its ancii value"""
 
     
     # code will be return for encoding before writing in the file
-    #decode will be return when reading from file
     if ord(character) < 128:
         code = ord(character) + 128
-        decode = ord(character) + 128
+
     else:
         code = ord(character) - 128
-        decode = ord(character) - 128
     
-    #selecting return value 
-    if decoder:
-        return chr(decode)
+    # return value
     return chr(code)
 
 # -----------------------decoding string---------------------------------------------
@@ -496,7 +471,6 @@ def decode_string(string):
 
     return decoded
 #------------Math functions-----------------------------------------------------------
-
 def dependent(age):
     """This function save a new dependent into a dependent's list"""
 
@@ -504,14 +478,13 @@ def dependent(age):
 
     return
 
-
-def income(hourly_rate, monthly_hours, house_hold = True):
+def income(hourly_rate, weekly_hours, house_hold = True):
     """This function returns a realistic income after taxes 
     and other obligations not ususally consider are deducted"""
 
     
     #This variable holds a gross yearlycalculated income
-    y_income = hourly_rate * monthly_hours * 12
+    y_income = hourly_rate * weekly_hours * 52
 
     # This if-elif-else deducts the faderal taxes Source: Internal Revenue Service
     if (y_income < 15700 and house_hold) or (y_income < 11000 and not house_hold):
@@ -538,9 +511,10 @@ def income(hourly_rate, monthly_hours, house_hold = True):
     # no data for other income brakets, amount was proportionaly ajusted
     expenditure_per_child = (y_income  / 107400) * 12980
 
-    for child in dependent_list:
-        if child <= 17:
-            y_income = y_income - expenditure_per_child     
+    #if len(dependent_list)  > 0:
+        #for child in dependent_list:
+            #if child <= 17:
+                #y_income = y_income - expenditure_per_child     
 
     # after yearly income processed it extimate monthly income
     monthly_income = y_income / 12
@@ -549,7 +523,7 @@ def income(hourly_rate, monthly_hours, house_hold = True):
 
 
 
-def mortgage( loan_amount,anual_interest_rate, years,home_value = 0, is_morgatge = False, is_carLoan = False):
+def mortgage( loan_amount, anual_interest_rate, years,home_value = 0, is_morgatge = False, is_carLoan = False):
 
     """This function calculates the monthly payment for loan if principal, 
         interest rate and duration are known. Function also have special 
@@ -601,8 +575,101 @@ def mortgage( loan_amount,anual_interest_rate, years,home_value = 0, is_morgatge
     # returns the monthly payment
     return round(Monthly,2)
 
-#----------------Testing Functions-------------------------------
+
+# this blok loads the financial variables for the user
+def info_Loader(userName, password, logged = False):
+    "This function loads the information for a user"
+
+
+    Logged = False
+
+    global line_position
+
+    info = []
+
+    with open('Data_base', 'a+') as DB:
+        DB.seek(0)
+        if len(DB.readline().split()) == 0:
+            return False
+        for line in DB:
+            line_position += 1
+            info = line.split()
+            if len(info) == 0:
+                continue
+
+            if (userName == decode_string(info[0]) and  password == decode_string(info[1])):
+                
+                Logged = True
+                break
+
+
+    global Username
+    Username = decode_string(info[0])
+
+    global Password
+    Password = decode_string(info[1])
+
+    global Monthly_Income
+    Monthly_Income = float(decode_string(info[2]))
+
+    global Total_assets
+    Total_assets = float(decode_string(info[3]))
+
+    global Monthly_housing_expenses
+    Monthly_housing_expenses = float(decode_string(info[5]))
+
+    global Monthly_transportation_expenses 
+    Monthly_transportation_expenses = float(decode_string(info[4]))
+
+    global dependent_list 
+    dependent_list = info[6]
+    
+    return Logged
+
+# this block saves the financial variables for the user
+def info_Saver(username, password):
+    "This function saves the information for a user"
+    
+    global line_position
+
+    with open('Data_base', 'a+') as DB:
+        DB.seek(0)
+        whole_text = DB.readlines()
+        DB.close()
+    with open('Data_base', 'w') as DB:
+        for line in whole_text:
+            if Username == decode_string(line.split()[0]) and  Password == decode_string(line.split()[1]):
+                DB.write(f"{decode_string(Username)} {decode_string(Password)} ") 
+                DB.write(f"{decode_string(str(Monthly_Income))} {decode_string(str(Total_assets))} ")
+                DB.write(f"{decode_string(str(Monthly_transportation_expenses))} {decode_string(str(Monthly_housing_expenses))} {dependent_list}\n")
+                continue
+            DB.write(line)
+            
+#-----------------Global Variables-------------------------------
+#This string var stores the  username 
+Username = ''
+
+#This string var stores the password
+Password = ''
+
+#this float var stores the monthly income
+Monthly_Income = ''
+
+# this float var stores the total assets
+Total_assets = 0.0
+
+#this float var stores the monthly housing expenses
+Monthly_housing_expenses = 0.0
+
+#this float var stores the monthly transportation
+Monthly_transportation_expenses = 0.0
+
+# this list stores the age of dependents
 dependent_list = []
 
-AppBox()
+#This var stores the position of teh user line in file
+line_position = 0
+#----------------Testing Functions-------------------------------
 
+
+AppBox()
