@@ -47,7 +47,7 @@ class User_box(QtWidgets.QWidget):
 
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
-        self.setGeometry(300, 300, 600, 600)
+        self.setGeometry(300, 300, 400, 280)
         self.setWindowTitle('Create user')
 
         # user label
@@ -58,7 +58,7 @@ class User_box(QtWidgets.QWidget):
         # user label top
         self.user = QtWidgets.QLabel(self)
         self.user.move(135, 20)
-        self.user.setText('Entert the desired username(14 character max)')
+        self.user.setText('Enter the desired username(14 character max)')
         self.user.adjustSize()
 
         # user lineedit
@@ -74,7 +74,7 @@ class User_box(QtWidgets.QWidget):
         # password label top
         self.user = QtWidgets.QLabel(self)
         self.user.move(135, 90)
-        self.user.setText('Entert the desired password(14 character max)')
+        self.user.setText('Enter the desired password(14 character max)')
         self.user.adjustSize()
         
         # password line edit
@@ -99,9 +99,7 @@ class User_box(QtWidgets.QWidget):
         self.Re_enterpassword.setObjectName('Re_Enter')
         self.Re_enterpassword.setEchoMode(2)
         self.Re_enterpassword.move(135, 210)
-        
-
-        
+         
         # accept button
         self.accept = QtWidgets.QPushButton(self)
         self.accept.setText('Accept')
@@ -113,8 +111,6 @@ class User_box(QtWidgets.QWidget):
         self.cancel.setText('Cancel')
         self.cancel.move(180, 250)
         self.cancel.clicked.connect(self.mainWin)
-        
-
         
         # showing the window
         self.show()
@@ -140,7 +136,6 @@ class User_box(QtWidgets.QWidget):
         password2 = self.Re_enterpassword.text() 
         
         taken = False
-        decodedUser = ''
 
         with open('Data_base', 'a+') as DB:
             DB.seek(0)
@@ -174,27 +169,13 @@ class User_box(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Passwords do ot match')
 
         else:
-            encodedUser = ''
-            encodedPassword = ''
-            for character in userName:
-                encodedUser += coder_decoder(character)    
-            for character in password:
-                encodedPassword += coder_decoder(character)    
-            
-            encodedUser += (15 - len(encodedUser)) * ' '
-            encodedPassword += (15 - len(encodedPassword)) * ' '
-            
-
             with open('Data_base', 'a+') as  DB:
-                DB.write(encodedUser)
-                DB.seek(15)
-                DB.write(encodedPassword)
-                for input in range(4):
-                    DB.write(coder_decoder('0') + ' ')
-                DB.write('[] ')           
-                DB.write('\n')
+                DB.write(decode_string(userName) + ' ')
+                DB.write(decode_string(password)+ ' ')
+                DB.write(decode_string('0.0 0.0 0.0 0.0 '))
+                DB.write(decode_string('none') + '\n')
                 DB.close()
-            QtWidgets.QMessageBox.information(self, 'Sucess', 'your information was saved')
+            QtWidgets.QMessageBox.information(self, 'Success', 'your information was saved')
             self.close()
             self.login()
            
@@ -205,7 +186,7 @@ class Login_box(QtWidgets.QWidget):
 
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
-        self.setGeometry(300,300, 600, 600)
+        self.setGeometry(300,300, 330, 220)
         self.setWindowTitle('Login')
     
         # user label
@@ -244,13 +225,13 @@ class Login_box(QtWidgets.QWidget):
         # accept button
         self.accept = QtWidgets.QPushButton(self)
         self.accept.setText('Accept')
-        self.accept.move(100, 250)
+        self.accept.move(100, 170)
         self.accept.clicked.connect(self.logging)
 
         # cancel button
         self.cancel = QtWidgets.QPushButton(self)
         self.cancel.setText('Cancel')
-        self.cancel.move(180, 250)
+        self.cancel.move(180, 170)
         self.cancel.clicked.connect(self.mainWin)
         
         # showing the window
@@ -312,7 +293,7 @@ class Financial_box(QtWidgets.QWidget):
         self.housing_label.move(250, 80)
         self.housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
 
-        # dependent label 1
+        # dependent label
         self.dependent_label = QtWidgets.QLabel(self)
         self.dependent_label.move(40, 120)
         self.dependent_label.setText(f'Dependents: {dependent_list}')
@@ -327,7 +308,7 @@ class Financial_box(QtWidgets.QWidget):
         self.dependents_button = QtWidgets.QPushButton(self)
         self.dependents_button.setText('Dependants')
         self.dependents_button.move(50, 400)
-        self.dependents_button.clicked.connect(self.close)
+        self.dependents_button.clicked.connect(self.add_dependents)
         
         # add income button
         self.income_button = QtWidgets.QPushButton(self)
@@ -339,8 +320,7 @@ class Financial_box(QtWidgets.QWidget):
         self.transportation_button = QtWidgets.QPushButton(self)
         self.transportation_button.setText('Transportation')
         self.transportation_button.move(250, 400)
-        self.transportation_button.clicked.connect(self.close)
-        
+        self.transportation_button.clicked.connect(self.add_transportation)
         
         # add housing expenses button
         self.housing_button = QtWidgets.QPushButton(self)
@@ -361,8 +341,6 @@ class Financial_box(QtWidgets.QWidget):
         self.cancel.move(500, 550)
         self.cancel.clicked.connect(self.close)
         self.show()
-
-    
     
     # returns tu main window    
     def mainWin(self):
@@ -377,13 +355,27 @@ class Financial_box(QtWidgets.QWidget):
         self.income_window = add_income()
         self.income_window.show()
 
-    # calling add income window    
+    # calling add housing window    
     def add_housing(self):
         """creates an object type add_housing"""
         self.close()
         self.housing_window = add_housing()
         self.housing_window.show()
 
+    # calling add transportation window    
+    def add_transportation(self):
+        """creates an object type add_housing"""
+        self.close()
+        self.transportation_window = add_transportation()
+        self.transportation_window.show()
+
+    # calling add dependents window    
+    def add_dependents(self):
+        """creates an object type add_housing"""
+        self.close()
+        self.dependents_window = add_dependents()
+        self.dependents_window.show()  
+    
 #//////////////////SUBWINDOWs OF ADD FINANCE//////////////////////
 #-------------------------Income window--------------------------
 class add_income(QtWidgets.QWidget):
@@ -395,7 +387,7 @@ class add_income(QtWidgets.QWidget):
         # income label 
         self.hours_label = QtWidgets.QLabel(self)
         self.hours_label.move(40, 50)
-        self.hours_label.setText('Enter your hourly rate and number of hours per month:')
+        self.hours_label.setText('Enter your hourly rate and number of hours per week:')
 
         # rate label
         self.rate_label = QtWidgets.QLabel(self)
@@ -440,10 +432,13 @@ class add_income(QtWidgets.QWidget):
         
         global Monthly_Income
         try:
-            Monthly_Income = income(float(self.rate_line.text()),float(self.hours_line.text()))
+            total = income(float(self.rate_line.text()), float(self.hours_line.text()))
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
             return
+        
+        if Monthly_Income != total:
+            Monthly_Income = total
            
         self.close()
         info_Saver(Username, Password)
@@ -471,7 +466,7 @@ class add_housing(QtWidgets.QWidget):
         # gross payment label
         self.payment_label = QtWidgets.QLabel(self)
         self.payment_label.move(20, 50)
-        self.payment_label.setText('Monthtly rent or mortgage payment:')
+        self.payment_label.setText('Monthly rent or mortgage payment:')
         
         # gross payment line edit
         self.payment_line = QtWidgets.QLineEdit(self)
@@ -570,13 +565,16 @@ class add_housing(QtWidgets.QWidget):
         
         global Monthly_housing_expenses
         try:
-            Monthly_housing_expenses += float(self.payment_line.text()) + float(self.insurance_line.text())
-            Monthly_housing_expenses += float(self.electric_line.text()) + float(self.Internet_line.text())
-            Monthly_housing_expenses += float(self.taxes_line.text()) + float(self.HOA_line.text())
-            Monthly_housing_expenses += float(self.gas_line.text())
+            total = float(self.payment_line.text()) + float(self.insurance_line.text())
+            total += float(self.electric_line.text()) + float(self.Internet_line.text())
+            total += float(self.taxes_line.text()) + float(self.HOA_line.text())
+            total += float(self.gas_line.text())
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
             return
+        
+        if Monthly_housing_expenses != total:
+            Monthly_housing_expenses = total
 
         self.close()
         info_Saver(Username, Password)
@@ -589,9 +587,167 @@ class add_housing(QtWidgets.QWidget):
         self.Finances = Financial_box()
         self.Finances.show()
 
+#-------------------------transportation window--------------------------
+class add_transportation(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(600, 600, 450, 250)
+        self.setWindowTitle('Add Housing expenses')
         
-#********************CREATING THE APP*********************************
+        # top label 
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 20)
+        self.hours_label.setText('Please fill all the information related to transportation expenses')
+
+        # car payment label
+        self.payment_label = QtWidgets.QLabel(self)
+        self.payment_label.move(20, 50)
+        self.payment_label.setText('Monthly Car Payment(if any):')
+        
+        # gross payment line edit
+        self.payment_line = QtWidgets.QLineEdit(self)
+        self.payment_line.setText('0.0')
+        self.payment_line.setObjectName('payment')
+        self.payment_line.move(200, 50)
+
+        # car insurance label
+        self.insurance_label = QtWidgets.QLabel(self)
+        self.insurance_label.move(20, 80)
+        self.insurance_label.setText('Monthly Car Insurance:')
+        
+        # car insurance line edit
+        self.insurance_line = QtWidgets.QLineEdit(self)
+        self.insurance_line.setObjectName('insurance')
+        self.insurance_line.setText('0.0')
+        self.insurance_line.move(200, 80)   
+
+        # mileage label
+        self.mileage_label = QtWidgets.QLabel(self)
+        self.mileage_label.move(20, 110)
+        self.mileage_label.setText('Average Mileage per Month:')
+        
+        # mileage line edit
+        self.mileage_line = QtWidgets.QLineEdit(self)
+        self.mileage_line.setObjectName('mileage')
+        self.mileage_line.setText('0.0')
+        self.mileage_line.move(200, 110)
+
+        # text was too long
+        text = 'The total monthly cost includes gas and maintenace cost base on national average'
+        text2 = 'Accurate numbers depend of several factors like year model and type of engine ect.'
+
+        # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('accept')
+        self.accept.move(40, 200)
+        self.accept.clicked.connect(self.updatingTransportation)
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Exit')
+        self.cancel.move(135, 200)
+        self.cancel.clicked.connect(self.addFinance)
+        
+        self.show()
+
+    # this function saves the information and return to the dashboard    
+    def updatingTransportation(self):
+        """This function calculates updates the total transportation expenses"""
+        
+        global Monthly_transportation_expenses
+        
+        try:
+            total = float(self.payment_line.text()) + float(self.insurance_line.text())
+            total += float(self.mileage_line.text()) * 0.0955 + int(self.mileage_line.text()) * 0.09 
             
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+        
+        if total != Monthly_transportation_expenses:
+            Monthly_transportation_expenses = total
+
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+
+     # creates an object type addFinances to closes current window without changes
+    def addFinance(self):
+        self.close()
+        self.Finances = Financial_box()
+        self.Finances.show()
+
+#-------------------------dependents window--------------------------
+class add_dependents(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(600, 600, 460, 140)
+        self.setWindowTitle('Add Housing expenses')
+        
+        # top label 1
+        self.top_label = QtWidgets.QLabel(self)
+        self.top_label.move(20, 20)
+        self.top_label.setText('Please add each dependant age seperated by a comma e.g.: 1, 34 , 53, ...')
+
+        # top label 2
+        self.top_label = QtWidgets.QLabel(self)
+        self.top_label.move(20, 50)
+        self.top_label.setText('Use only whole numbers for the age for instance is dependent is 9 moths old input zero')
+
+        # dependents lable label
+        self.dependents_label = QtWidgets.QLabel(self)
+        self.dependents_label.move(120, 80)
+        self.dependents_label.setText('Dependents:')
+        
+        # dependent line edit
+        self.dependents_line = QtWidgets.QLineEdit(self)
+        self.dependents_line.setText('')
+        self.dependents_line.setObjectName('dependents')
+        self.dependents_line.move(200, 80)
+
+        # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('accept')
+        self.accept.move(90, 110)
+        self.accept.clicked.connect(self.updatingDependents)
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Exit')
+        self.cancel.move(300, 110)
+        self.cancel.clicked.connect(self.addFinance)
+        
+        self.show()
+
+    # this function saves the information and return to the dashboard    
+    def updatingDependents(self):
+        """This function updates the number of dependents"""
+        
+        global dependent_list
+        
+        try:
+            text = self.dependents_line.text().replace(',', ' ')
+            total = list(text.split())
+    
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Please follow the instructions')
+            return
+        
+        if total != dependent_list:
+            dependent_list = total
+
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+
+     # creates an object type addFinances to closes current window without changes
+    def addFinance(self):
+        self.close()
+        self.Finances = Financial_box()
+        self.Finances.show()  
+#********************CREATING THE APP*********************************           
 def AppBox():
     # creating main window
     Budget_app =  QApplication(sys.argv)
@@ -670,12 +826,13 @@ def income(hourly_rate, weekly_hours, house_hold = True):
     # no data for other income brakets, amount was proportionaly ajusted
     expenditure_per_child = (y_income  / 107400) * 12980
 
-    #if len(dependent_list)  > 0:
-        #for child in dependent_list:
-            #if child <= 17:
-                #y_income = y_income - expenditure_per_child     
+    if dependent_list[0] != "none":
+        for child in dependent_list:
+            if int(child) <= 17:
+                
+                y_income = y_income - expenditure_per_child     
 
-    # after yearly income processed it extimate monthly income
+    # after yearly income processed it extimates monthly income
     monthly_income = y_income / 12
 
     return round(monthly_income, 2)
@@ -686,7 +843,7 @@ def mortgage( loan_amount, anual_interest_rate, years,home_value = 0, is_morgatg
 
     """This function calculates the monthly payment for loan if principal, 
         interest rate and duration are known. Function also have special 
-        calculation if is specified as morgage or carloan"""
+        calculation if is specified as mortgage or carloan"""
 
     
      # this line preprocess the anual interest rate, if id decimal leaved unchanged else turned into decimal
@@ -701,8 +858,7 @@ def mortgage( loan_amount, anual_interest_rate, years,home_value = 0, is_morgatg
     
     # this variable holds the monthly payment and is returned by the function after calculated
     Monthly = loan_amount * (monthly_rate*(1 + monthly_rate)**months ) / ( (1 + monthly_rate)**months - 1) 
-
-    
+ 
     if is_morgatge:
         # the real state taxt rate in nevada
         Local_tax = 0.0075
@@ -781,9 +937,11 @@ def info_Loader(userName, password, logged = False):
     global Monthly_transportation_expenses 
     Monthly_transportation_expenses = float(decode_string(info[4]))
 
-    global dependent_list 
-    dependent_list = info[6]
-    
+    global dependent_list
+    dependent_list = []
+    for child in range(6, len(info)):
+        dependent_list.append(decode_string(info[child]))
+
     return Logged
 
 # this block saves the financial variables for the user
@@ -801,7 +959,14 @@ def info_Saver(username, password):
             if Username == decode_string(line.split()[0]) and  Password == decode_string(line.split()[1]):
                 DB.write(f"{decode_string(Username)} {decode_string(Password)} ") 
                 DB.write(f"{decode_string(str(Monthly_Income))} {decode_string(str(Total_assets))} ")
-                DB.write(f"{decode_string(str(Monthly_transportation_expenses))} {decode_string(str(Monthly_housing_expenses))} {dependent_list}\n")
+                DB.write(f"{decode_string(str(Monthly_transportation_expenses))} {decode_string(str(Monthly_housing_expenses))} ") 
+                if dependent_list[0] != 'none':
+                    for child in dependent_list:
+                        DB.write(f"{decode_string(child)} ")
+                    DB.write(f"\n")
+                else:
+                    DB.write(f"{decode_string('none')} \n")     
+    
                 continue
             DB.write(line)
             
