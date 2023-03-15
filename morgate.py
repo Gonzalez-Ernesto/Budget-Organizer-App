@@ -47,7 +47,7 @@ class User_box(QtWidgets.QWidget):
 
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
-        self.setGeometry(300,300, 600, 600)
+        self.setGeometry(300, 300, 600, 600)
         self.setWindowTitle('Create user')
 
         # user label
@@ -346,13 +346,13 @@ class Financial_box(QtWidgets.QWidget):
         self.housing_button = QtWidgets.QPushButton(self)
         self.housing_button.setText('Housing')
         self.housing_button.move(450, 400)
-        self.housing_button.clicked.connect(self.close)
+        self.housing_button.clicked.connect(self.add_housing)
 
-        # accept button
+        # Logout button
         self.accept = QtWidgets.QPushButton(self)
         self.accept.setText('Log out')
         self.accept.move(100, 550)
-        self.accept.clicked.connect(self.close)
+        self.accept.clicked.connect(self.mainWin)
 
 
         # cancel button
@@ -362,18 +362,30 @@ class Financial_box(QtWidgets.QWidget):
         self.cancel.clicked.connect(self.close)
         self.show()
 
+    
+    
+    # returns tu main window    
+    def mainWin(self):
+        self.Main_Window = App_Window()
+        self.Main_Window.show()
+        self.close()
+
+    # calling add income window    
     def add_income_window(self):
-        """creates aan object type add_income"""
+        """creates an object type add_income"""
         self.close()
         self.income_window = add_income()
         self.income_window.show()
 
-#//////////////////SUBWINDOWS OF ADD FINANCE//////////////////////
+    # calling add income window    
+    def add_housing(self):
+        """creates an object type add_housing"""
+        self.close()
+        self.housing_window = add_housing()
+        self.housing_window.show()
 
-
-
-
-#//////////////////SUBWINDOWS OF ADD FINANCE//////////////////////
+#//////////////////SUBWINDOWs OF ADD FINANCE//////////////////////
+#-------------------------Income window--------------------------
 class add_income(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
@@ -392,6 +404,7 @@ class add_income(QtWidgets.QWidget):
         
         # rate line edit
         self.rate_line = QtWidgets.QLineEdit(self)
+        self.rate_line.setText('0.0')
         self.rate_line.setObjectName('rate')
         self.rate_line.move(135, 80)
 
@@ -402,6 +415,7 @@ class add_income(QtWidgets.QWidget):
         
         # hours line edit
         self.hours_line = QtWidgets.QLineEdit(self)
+        self.hours_line.setText('0.0')
         self.hours_line.setObjectName('rate')
         self.hours_line.move(135, 120)
 
@@ -416,22 +430,164 @@ class add_income(QtWidgets.QWidget):
         self.cancel = QtWidgets.QPushButton(self)
         self.cancel.setText('Exit')
         self.cancel.move(135, 160)
-        self.cancel.clicked.connect(self.close)
+        self.cancel.clicked.connect(self.addFinance)
         
         self.show()
-
-        print(repr(self.rate_line.text()))
-
         
+    # this function saves the information and return to the dashboard
     def updatingIncome(self):
         """This function updates the total income passing the entered information to teh function income"""
         
         global Monthly_Income
-        Monthly_Income = income(float(self.rate_line.text()),float(self.hours_line.text()))
+        try:
+            Monthly_Income = income(float(self.rate_line.text()),float(self.hours_line.text()))
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+           
         self.close()
         info_Saver(Username, Password)
         self.return_window = Financial_box()
         self.return_window.show()
+
+    # creates an object type addFinances
+    def addFinance(self):
+        self.close()
+        self.Finances = Financial_box()
+        self.Finances.show()
+
+#-------------------------housing window--------------------------
+class add_housing(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(600, 600, 350, 350)
+        self.setWindowTitle('Add Housing expenses')
+        
+        # top label 
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 20)
+        self.hours_label.setText('Please fill all the information related to housing expenses')
+
+        # gross payment label
+        self.payment_label = QtWidgets.QLabel(self)
+        self.payment_label.move(20, 50)
+        self.payment_label.setText('Monthtly rent or mortgage payment:')
+        
+        # gross payment line edit
+        self.payment_line = QtWidgets.QLineEdit(self)
+        self.payment_line.setText('0.0')
+        self.payment_line.setObjectName('payment')
+        self.payment_line.move(200, 50)
+
+        # property insurance label
+        self.insurance_label = QtWidgets.QLabel(self)
+        self.insurance_label.move(20, 80)
+        self.insurance_label.setText('Property Insurance:')
+        
+        # property insurance line edit
+        self.insurance_line = QtWidgets.QLineEdit(self)
+        self.insurance_line.setObjectName('insurance')
+        self.insurance_line.setText('0.0')
+        self.insurance_line.move(200, 80)
+
+        # electric bill label
+        self.electric_label = QtWidgets.QLabel(self)
+        self.electric_label.move(20, 110)
+        self.electric_label.setText('Electric Bill:')
+        
+        # electric bill line edit
+        self.electric_line = QtWidgets.QLineEdit(self)
+        self.electric_line.setObjectName('electric')
+        self.electric_line.setText('0.0')
+        self.electric_line.move(200, 110)
+
+         # Internet bill label
+        self.Internet_label = QtWidgets.QLabel(self)
+        self.Internet_label.move(20, 140)
+        self.Internet_label.setText('Internet Bill:')
+        
+        # Internet bill line edit
+        self.Internet_line = QtWidgets.QLineEdit(self)
+        self.Internet_line.setObjectName('Internet')
+        self.Internet_line.setText('0.0')
+        self.Internet_line.move(200, 140)     
+
+        # homeowners label
+        self.homeowners_label = QtWidgets.QLabel(self)
+        self.homeowners_label.move(90, 170)
+        self.homeowners_label.setText('Homeownership Only')
+
+        # property taxes label
+        self.taxes_label = QtWidgets.QLabel(self)
+        self.taxes_label.move(20, 200)
+        self.taxes_label.setText('Property Taxes:')
+        
+        # property taxes line edit
+        self.taxes_line = QtWidgets.QLineEdit(self)
+        self.taxes_line.setObjectName('taxes')
+        self.taxes_line.setText('0.0')
+        self.taxes_line.move(200, 200)
+
+        # HOA label
+        self.HOA_label = QtWidgets.QLabel(self)
+        self.HOA_label.move(20, 230)
+        self.HOA_label.setText('HOA dues:')
+        
+        # HOA line edit
+        self.HOA_line = QtWidgets.QLineEdit(self)
+        self.HOA_line.setObjectName('HOA')
+        self.HOA_line.setText('0.0')
+        self.HOA_line.move(200, 230)
+
+        # gas bill label
+        self.gas_label = QtWidgets.QLabel(self)
+        self.gas_label.move(20, 260)
+        self.gas_label.setText('Gas bill:')
+        
+        # gas bill line edit
+        self.gas_line = QtWidgets.QLineEdit(self)
+        self.gas_line.setObjectName('Gas')
+        self.gas_line.setText('0.0')
+        self.gas_line.move(200, 260)
+
+         # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('accept')
+        self.accept.move(40, 290)
+        self.accept.clicked.connect(self.updatingHousing)
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Exit')
+        self.cancel.move(135, 290)
+        self.cancel.clicked.connect(self.addFinance)
+        
+        self.show()
+
+    # this function saves the information and return to the dashboard    
+    def updatingHousing(self):
+        """This function calculates updates the total housing expenses"""
+        
+        global Monthly_housing_expenses
+        try:
+            Monthly_housing_expenses += float(self.payment_line.text()) + float(self.insurance_line.text())
+            Monthly_housing_expenses += float(self.electric_line.text()) + float(self.Internet_line.text())
+            Monthly_housing_expenses += float(self.taxes_line.text()) + float(self.HOA_line.text())
+            Monthly_housing_expenses += float(self.gas_line.text())
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+
+     # creates an object type addFinances to closes current window without changes
+    def addFinance(self):
+        self.close()
+        self.Finances = Financial_box()
+        self.Finances.show()
 
         
 #********************CREATING THE APP*********************************
@@ -485,6 +641,9 @@ def income(hourly_rate, weekly_hours, house_hold = True):
     
     #This variable holds a gross yearlycalculated income
     y_income = hourly_rate * weekly_hours * 52
+
+    if y_income == 0:
+        return 0
 
     # This if-elif-else deducts the faderal taxes Source: Internal Revenue Service
     if (y_income < 15700 and house_hold) or (y_income < 11000 and not house_hold):
@@ -580,7 +739,6 @@ def mortgage( loan_amount, anual_interest_rate, years,home_value = 0, is_morgatg
 def info_Loader(userName, password, logged = False):
     "This function loads the information for a user"
 
-
     Logged = False
 
     global line_position
@@ -589,8 +747,12 @@ def info_Loader(userName, password, logged = False):
 
     with open('Data_base', 'a+') as DB:
         DB.seek(0)
-        if len(DB.readline().split()) == 0:
+
+        first_line = DB.readline().split()
+        if len(first_line) == 0:
             return False
+
+        DB.seek(0)       
         for line in DB:
             line_position += 1
             info = line.split()
@@ -598,10 +760,8 @@ def info_Loader(userName, password, logged = False):
                 continue
 
             if (userName == decode_string(info[0]) and  password == decode_string(info[1])):
-                
                 Logged = True
                 break
-
 
     global Username
     Username = decode_string(info[0])
@@ -645,7 +805,7 @@ def info_Saver(username, password):
                 continue
             DB.write(line)
             
-#-----------------Global Variables-------------------------------
+#---------------Global Variables-------------------------------
 #This string var stores the  username 
 Username = ''
 
@@ -669,7 +829,6 @@ dependent_list = []
 
 #This var stores the position of teh user line in file
 line_position = 0
-#----------------Testing Functions-------------------------------
 
-
+#----------------APPLICATION-------------------------------
 AppBox()
