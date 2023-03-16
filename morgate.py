@@ -1,5 +1,7 @@
 #*******************************GRAPHIC USER INTERFACE*******************
-import sys , random
+import sys , random, matplotlib.pyplot as ptl
+from matplotlib.backends.backend_agg import FigureCanvasAgg as graph
+#from matplotlib.figure import
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -479,7 +481,7 @@ class add_income(QtWidgets.QWidget):
         self.cancel.move(135, 160)
         self.cancel.clicked.connect(self.addFinance)
         
-        self.show()
+        #self.show()
         
     # this function saves the information and return to the dashboard
     def updatingIncome(self):
@@ -517,7 +519,7 @@ class add_income(QtWidgets.QWidget):
         self.return_window = Financial_box()
         self.return_window.show()
     
-    # This function load/creates housing info 
+    # This function load/creates income info 
     def input_loader(self):
         """This function loads current input"""     
 
@@ -737,7 +739,6 @@ class add_transportation(QtWidgets.QWidget):
         #loading saved info
         Transportation_info = self.input_loader()
         
-        
         # top label 
         self.hours_label = QtWidgets.QLabel(self)
         self.hours_label.move(40, 20)
@@ -930,17 +931,30 @@ class add_dependents(QtWidgets.QWidget):
         
         global dependent_list
         
-        try:
-            text = self.dependents_line.text().replace(',', ' ')
-            total = list(text.split())
+        if self.dependents_line.text() == '' and dependent_list[0] == 'none':
+            dependent_list = ['none']
+        elif self.dependents_line.text() == '':
+            self.close()
+            self.return_window = Financial_box()
+            self.return_window.show()
+            
+        else:        
+            try:
+                text = self.dependents_line.text().replace(',', ' ')
+                total = list(text.split())
     
-        except:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Please follow the instructions')
-            return
+            except:
+                QtWidgets.QMessageBox.critical(self, 'Try Again', 'Please follow the instructions')
+                return
         
-        if total != dependent_list:
-            dependent_list = total
+            if total != dependent_list:
+                dependent_list = total
+        
+        #updating the income with the new dependents list
+        global Monthly_Income 
+        Monthly_Income = income(float(decode_string(self.income_loader()[1])), float(decode_string(self.income_loader()[2])))
 
+        self.income_loader()
         self.close()
         info_Saver(Username, Password)
         self.return_window = Financial_box()
@@ -951,6 +965,26 @@ class add_dependents(QtWidgets.QWidget):
         self.close()
         self.Finances = Financial_box()
         self.Finances.show()
+
+    # This function load/creates income info. CATION!!! manipulation of Income_Dbase
+    def income_loader(self):
+        """This function loads current input"""     
+
+        with open('Income_Dbase', 'a+') as DB:
+            DB.seek(0)
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+
+                if str(User_Id) == decode_string(info[0]):
+                    return info    
+                   
+            DB.write(f"{decode_string(str(User_Id))} ")
+            DB.write(decode_string('0.0 ') * 2)
+            DB.write('\n')
+            DB.close()
+            self.income_loader()
 
 #-------------------------Assets window--------------------------
 class add_Assets(QtWidgets.QWidget):
@@ -1505,12 +1539,7 @@ def AppBox():
     Budget_app =  QApplication(sys.argv)
     Main_Window = App_Window()
     
-    
-    
-    
     sys.exit(Budget_app.exec())
-
-
 #-----------coder-Decoder-----------------------------------------------------------
 def coder_decoder(character):
     """This function encode and decode a single character using its ancii value"""
@@ -1565,9 +1594,9 @@ def income(hourly_rate, weekly_hours, house_hold = True):
     elif  (y_income < 231250): 
         y_income = y_income * 0.68  # 32% withhold
     elif  (y_income < 578100 and house_hold) or (y_income < 578125 and not house_hold): 
-        y_income = y_income * 0.65  # 35% deduction
+        y_income = y_income * 0.65  # 35% withhold
     else:
-        y_income = y_income * 0.63  # 37% deduction
+        y_income = y_income * 0.63  # 37% withhold
 
     # discounting annual expenditure on gift for family and friends 
     # source: The National Retail Federation’s annual survey of holiday 
@@ -1581,7 +1610,6 @@ def income(hourly_rate, weekly_hours, house_hold = True):
     if dependent_list[0] != "none":
         for child in dependent_list:
             if int(child) <= 17:
-                
                 y_income = y_income - expenditure_per_child     
 
     # after yearly income processed it extimates monthly income
@@ -1589,8 +1617,7 @@ def income(hourly_rate, weekly_hours, house_hold = True):
 
     return round(monthly_income, 2)
 
-
-
+# this function returns the monthly payment of a loan if interest rate, balance and loan term are known
 def mortgage( loan_amount, anual_interest_rate, years,home_value = 0, is_morgatge = False, is_carLoan = False):
 
     """This function calculates the monthly payment for loan if principal, 
