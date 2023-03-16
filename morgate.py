@@ -318,50 +318,50 @@ class Financial_box(QtWidgets.QWidget):
         self.housing_label.move(250, 80)
         self.housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
 
-        # housing label 
+        # debts label 
         self.housing_label = QtWidgets.QLabel(self)
-        self.housing_label.move(40, 120)
+        self.housing_label.move(40, 110)
         self.housing_label.setText(f'Total monthly debt obligations: {Monthly_Debt_expenses}')
 
         # dependent label
         self.dependent_label = QtWidgets.QLabel(self)
-        self.dependent_label.move(250, 120)
+        self.dependent_label.move(250, 110)
         self.dependent_label.setText(f'Dependents: {dependent_list}')
          
         # add assets button
         self.assets_button = QtWidgets.QPushButton(self)
         self.assets_button.setText('Assets')
-        self.assets_button.move(20, 300)
+        self.assets_button.move(20, 160)
         self.assets_button.clicked.connect(self.add_Assets)
 
         # add dependents button
         self.dependents_button = QtWidgets.QPushButton(self)
         self.dependents_button.setText('Dependants')
-        self.dependents_button.move(115, 300)
+        self.dependents_button.move(115, 160)
         self.dependents_button.clicked.connect(self.add_dependents)
         
         # add income button
         self.income_button = QtWidgets.QPushButton(self)
         self.income_button.setText('Income')
-        self.income_button.move(210, 300)
+        self.income_button.move(210, 160)
         self.income_button.clicked.connect(self.add_income_window)
 
         # add transportation expenses button
         self.transportation_button = QtWidgets.QPushButton(self)
         self.transportation_button.setText('Transportation')
-        self.transportation_button.move(305, 300)
+        self.transportation_button.move(305, 160)
         self.transportation_button.clicked.connect(self.add_transportation)
         
         # add housing expenses button
         self.housing_button = QtWidgets.QPushButton(self)
         self.housing_button.setText('Housing')
-        self.housing_button.move(400, 300)
+        self.housing_button.move(400, 160)
         self.housing_button.clicked.connect(self.add_housing)
 
         # add unsecured debt button
         self.debt_button = QtWidgets.QPushButton(self)
         self.debt_button.setText('Unsecured debt')
-        self.debt_button.move(495, 300)
+        self.debt_button.move(495, 160)
         self.debt_button.clicked.connect(self.add_Unsecured_Debts)
 
         # Logout button
@@ -432,6 +432,12 @@ class add_income(QtWidgets.QWidget):
         super().__init__()
         self.setGeometry(600, 600, 400, 200)
         self.setWindowTitle('Add Financial information')
+
+        # Creating the file
+        self.input_loader()
+
+        #loading saved info
+        Income_info = self.input_loader()
         
         # income label 
         self.hours_label = QtWidgets.QLabel(self)
@@ -445,7 +451,7 @@ class add_income(QtWidgets.QWidget):
         
         # rate line edit
         self.rate_line = QtWidgets.QLineEdit(self)
-        self.rate_line.setText('0.0')
+        self.rate_line.setText(decode_string(Income_info[1]))
         self.rate_line.setObjectName('rate')
         self.rate_line.move(135, 80)
 
@@ -456,7 +462,7 @@ class add_income(QtWidgets.QWidget):
         
         # hours line edit
         self.hours_line = QtWidgets.QLineEdit(self)
-        self.hours_line.setText('0.0')
+        self.hours_line.setText(decode_string(Income_info[2]))
         self.hours_line.setObjectName('rate')
         self.hours_line.move(135, 120)
 
@@ -494,6 +500,43 @@ class add_income(QtWidgets.QWidget):
         self.return_window = Financial_box()
         self.return_window.show()
 
+        with open('Income_Dbase', 'a+') as DB:
+            DB.seek(0)
+            whole_text = DB.readlines()
+            DB.close()
+        with open('Income_Dbase', 'w') as DB:    
+            for line in whole_text:
+                if str(User_Id) == decode_string(line.split()[0]):
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.rate_line.text())} ") 
+                    DB.write(f"{decode_string(str(self.hours_line.text()))} \n")   
+                    continue
+                DB.write(line)
+            DB.close()    
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+    
+    # This function load/creates housing info 
+    def input_loader(self):
+        """This function loads current input"""     
+
+        with open('Income_Dbase', 'a+') as DB:
+            DB.seek(0)
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+
+                if str(User_Id) == decode_string(info[0]):
+                    return info    
+                   
+            DB.write(f"{decode_string(str(User_Id))} ")
+            DB.write(decode_string('0.0 ') * 2)
+            DB.write('\n')
+            DB.close()
+            self.input_loader()
+
     # creates an object type addFinances
     def addFinance(self):
         self.close()
@@ -507,6 +550,12 @@ class add_housing(QtWidgets.QWidget):
         self.setGeometry(600, 600, 350, 350)
         self.setWindowTitle('Add Housing expenses')
         
+        # Creating the file
+        self.input_loader()
+
+        #loading saved info
+        Housing_info = self.input_loader()
+        
         # top label 
         self.hours_label = QtWidgets.QLabel(self)
         self.hours_label.move(40, 20)
@@ -519,7 +568,7 @@ class add_housing(QtWidgets.QWidget):
         
         # gross payment line edit
         self.payment_line = QtWidgets.QLineEdit(self)
-        self.payment_line.setText('0.0')
+        self.payment_line.setText(decode_string(Housing_info[1]))
         self.payment_line.setObjectName('payment')
         self.payment_line.move(200, 50)
 
@@ -531,7 +580,7 @@ class add_housing(QtWidgets.QWidget):
         # property insurance line edit
         self.insurance_line = QtWidgets.QLineEdit(self)
         self.insurance_line.setObjectName('insurance')
-        self.insurance_line.setText('0.0')
+        self.insurance_line.setText(decode_string(Housing_info[2]))
         self.insurance_line.move(200, 80)
 
         # electric bill label
@@ -542,7 +591,7 @@ class add_housing(QtWidgets.QWidget):
         # electric bill line edit
         self.electric_line = QtWidgets.QLineEdit(self)
         self.electric_line.setObjectName('electric')
-        self.electric_line.setText('0.0')
+        self.electric_line.setText(decode_string(Housing_info[3]))
         self.electric_line.move(200, 110)
 
          # Internet bill label
@@ -553,7 +602,7 @@ class add_housing(QtWidgets.QWidget):
         # Internet bill line edit
         self.Internet_line = QtWidgets.QLineEdit(self)
         self.Internet_line.setObjectName('Internet')
-        self.Internet_line.setText('0.0')
+        self.Internet_line.setText(decode_string(Housing_info[4]))
         self.Internet_line.move(200, 140)     
 
         # homeowners label
@@ -569,7 +618,7 @@ class add_housing(QtWidgets.QWidget):
         # property taxes line edit
         self.taxes_line = QtWidgets.QLineEdit(self)
         self.taxes_line.setObjectName('taxes')
-        self.taxes_line.setText('0.0')
+        self.taxes_line.setText(decode_string(Housing_info[5]))
         self.taxes_line.move(200, 200)
 
         # HOA label
@@ -580,7 +629,7 @@ class add_housing(QtWidgets.QWidget):
         # HOA line edit
         self.HOA_line = QtWidgets.QLineEdit(self)
         self.HOA_line.setObjectName('HOA')
-        self.HOA_line.setText('0.0')
+        self.HOA_line.setText(decode_string(Housing_info[6]))
         self.HOA_line.move(200, 230)
 
         # gas bill label
@@ -591,7 +640,7 @@ class add_housing(QtWidgets.QWidget):
         # gas bill line edit
         self.gas_line = QtWidgets.QLineEdit(self)
         self.gas_line.setObjectName('Gas')
-        self.gas_line.setText('0.0')
+        self.gas_line.setText(decode_string(Housing_info[7]))
         self.gas_line.move(200, 260)
 
          # accept button
@@ -630,6 +679,45 @@ class add_housing(QtWidgets.QWidget):
         self.return_window = Financial_box()
         self.return_window.show()
 
+        with open('Housing_Dbase', 'a+') as DB:
+            DB.seek(0)
+            whole_text = DB.readlines()
+            DB.close()
+        with open('Housing_Dbase', 'w') as DB:    
+            for line in whole_text:
+                if str(User_Id) == decode_string(line.split()[0]):
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.payment_line.text())} ") 
+                    DB.write(f"{decode_string(str(self.insurance_line.text()))} {decode_string(str(self.electric_line.text()))} ") 
+                    DB.write(f"{decode_string(str(self.Internet_line.text()))} {decode_string(str(self.taxes_line.text()))} ") 
+                    DB.write(f"{decode_string(str(self.HOA_line.text()))} {decode_string(str(self.gas_line.text()))} \n")   
+                    continue
+                DB.write(line)
+            DB.close()    
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+    
+    # This function load/creates housing info 
+    def input_loader(self):
+        """This function loads current input"""     
+
+        with open('Housing_Dbase', 'a+') as DB:
+            DB.seek(0)
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+
+                if str(User_Id) == decode_string(info[0]):
+                    return info    
+                   
+            DB.write(f"{decode_string(str(User_Id))} ")
+            DB.write(decode_string('0.0 ') * 7)
+            DB.write('\n')
+            DB.close()
+            self.input_loader()
+
      # creates an object type addFinances to closes current window without changes
     def addFinance(self):
         self.close()
@@ -640,8 +728,15 @@ class add_housing(QtWidgets.QWidget):
 class add_transportation(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.setGeometry(600, 600, 450, 250)
-        self.setWindowTitle('Add Housing expenses')
+        self.setGeometry(600, 600, 450, 290)
+        self.setWindowTitle('Add Transportation expenses')
+        
+        # Creating the file
+        self.input_loader()
+
+        #loading saved info
+        Transportation_info = self.input_loader()
+        
         
         # top label 
         self.hours_label = QtWidgets.QLabel(self)
@@ -655,7 +750,7 @@ class add_transportation(QtWidgets.QWidget):
         
         # gross payment line edit
         self.payment_line = QtWidgets.QLineEdit(self)
-        self.payment_line.setText('0.0')
+        self.payment_line.setText(decode_string(Transportation_info[1]))
         self.payment_line.setObjectName('payment')
         self.payment_line.move(200, 50)
 
@@ -667,7 +762,7 @@ class add_transportation(QtWidgets.QWidget):
         # car insurance line edit
         self.insurance_line = QtWidgets.QLineEdit(self)
         self.insurance_line.setObjectName('insurance')
-        self.insurance_line.setText('0.0')
+        self.insurance_line.setText(decode_string(Transportation_info[2]))
         self.insurance_line.move(200, 80)   
 
         # mileage label
@@ -678,23 +773,46 @@ class add_transportation(QtWidgets.QWidget):
         # mileage line edit
         self.mileage_line = QtWidgets.QLineEdit(self)
         self.mileage_line.setObjectName('mileage')
-        self.mileage_line.setText('0.0')
+        self.mileage_line.setText(decode_string(Transportation_info[3]))
         self.mileage_line.move(200, 110)
 
         # text was too long
         text = 'The total monthly cost includes gas and maintenace cost base on national average'
         text2 = 'Accurate numbers depend of several factors like year model and type of engine ect.'
 
+        fuel_cost = str(round(float(decode_string(Transportation_info[3])) * 0.0955, 2))
+        maintenance_cost = str(round(float(decode_string(Transportation_info[3])) * 0.09, 2))
+
+        # description 1 label 
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 140)
+        self.hours_label.setText(text)
+
+        # description 2 label 
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 160)
+        self.hours_label.setText(text2)
+
+        # car payment label
+        self.payment_label = QtWidgets.QLabel(self)
+        self.payment_label.move(20, 190)
+        self.payment_label.setText(f'Extimated Monthly Fuel Cost: {fuel_cost}')
+
+        # car payment label
+        self.payment_label = QtWidgets.QLabel(self)
+        self.payment_label.move(20, 220)
+        self.payment_label.setText(f'Extimated Monthly Maintenance cost: {maintenance_cost}')
+
         # accept button
         self.accept = QtWidgets.QPushButton(self)
         self.accept.setText('accept')
-        self.accept.move(40, 200)
+        self.accept.move(40, 250)
         self.accept.clicked.connect(self.updatingTransportation)
 
         # cancel button
         self.cancel = QtWidgets.QPushButton(self)
         self.cancel.setText('Exit')
-        self.cancel.move(135, 200)
+        self.cancel.move(135, 250)
         self.cancel.clicked.connect(self.addFinance)
         
         self.show()
@@ -721,6 +839,43 @@ class add_transportation(QtWidgets.QWidget):
         self.return_window = Financial_box()
         self.return_window.show()
 
+        with open('Transportation_Dbase', 'a+') as DB:
+            DB.seek(0)
+            whole_text = DB.readlines()
+            DB.close()
+        with open('Transportation_Dbase', 'w') as DB:    
+            for line in whole_text:
+                if str(User_Id) == decode_string(line.split()[0]):
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.payment_line.text())} ") 
+                    DB.write(f"{decode_string(str(self.insurance_line.text()))} {decode_string(str(self.mileage_line.text()))} \n")   
+                    continue
+                DB.write(line)
+            DB.close()    
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+    
+    # This function load/creates transportation info 
+    def input_loader(self):
+        """This function loads current input"""     
+
+        with open('Transportation_Dbase', 'a+') as DB:
+            DB.seek(0)
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+
+                if str(User_Id) == decode_string(info[0]):
+                    return info    
+                   
+            DB.write(f"{decode_string(str(User_Id))} ")
+            DB.write(decode_string('0.0 ') * 3)
+            DB.write('\n')
+            DB.close()
+            self.input_loader()
+
      # creates an object type addFinances to closes current window without changes
     def addFinance(self):
         self.close()
@@ -732,7 +887,7 @@ class add_dependents(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setGeometry(600, 600, 460, 140)
-        self.setWindowTitle('Add Housing expenses')
+        self.setWindowTitle('Add dependents')
         
         # top label 1
         self.top_label = QtWidgets.QLabel(self)
@@ -804,6 +959,12 @@ class add_Assets(QtWidgets.QWidget):
         self.setGeometry(600, 600, 500, 230)
         self.setWindowTitle('Add Assets')
         
+        # Creating the file
+        self.input_loader()
+
+        #loading saved info
+        Assets_info = self.input_loader()
+
         # top label 
         self.hours_label = QtWidgets.QLabel(self)
         self.hours_label.move(40, 20)
@@ -816,7 +977,7 @@ class add_Assets(QtWidgets.QWidget):
         
         # checking accounts balance line edit
         self.checking_line = QtWidgets.QLineEdit(self)
-        self.checking_line.setText('0.0')
+        self.checking_line.setText(decode_string(Assets_info[1]))
         self.checking_line.setObjectName('checking')
         self.checking_line.move(350, 50)
 
@@ -828,7 +989,7 @@ class add_Assets(QtWidgets.QWidget):
         # saving accounts balance line edit
         self.saving_line = QtWidgets.QLineEdit(self)
         self.saving_line.setObjectName('savings')
-        self.saving_line.setText('0.0')
+        self.saving_line.setText(decode_string(Assets_info[2]))
         self.saving_line.move(350, 80)
 
         # saving bonds label
@@ -839,7 +1000,7 @@ class add_Assets(QtWidgets.QWidget):
         # saving bonds line edit
         self.bonds_line = QtWidgets.QLineEdit(self)
         self.bonds_line.setObjectName('bonds')
-        self.bonds_line.setText('0.0')
+        self.bonds_line.setText(decode_string(Assets_info[3]))
         self.bonds_line.move(350, 110)
 
          # stocks label
@@ -850,7 +1011,7 @@ class add_Assets(QtWidgets.QWidget):
         # stocks line edit
         self.stocks_line = QtWidgets.QLineEdit(self)
         self.stocks_line.setObjectName('stocks')
-        self.stocks_line.setText('0.0')
+        self.stocks_line.setText(decode_string(Assets_info[4]))
         self.stocks_line.move(350, 140)
 
         # cash balance label
@@ -860,7 +1021,7 @@ class add_Assets(QtWidgets.QWidget):
         
         # cash line edit
         self.cash_line = QtWidgets.QLineEdit(self)
-        self.cash_line.setText('0.0')
+        self.cash_line.setText(decode_string(Assets_info[5]))
         self.cash_line.setObjectName('checking')
         self.cash_line.move(350, 170)
 
@@ -899,290 +1060,6 @@ class add_Assets(QtWidgets.QWidget):
         self.return_window = Financial_box()
         self.return_window.show()
 
-     # creates an object type addFinances to closes current window without changes
-    def addFinance(self):
-        self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
-    
-    #-------------------------housing window--------------------------
-class add_Unsecured_Debts(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setGeometry(600, 600, 400, 360)
-        self.setWindowTitle('Adding Unsecured Debts')
-        
-        
-        Assets_info = self.input_loader()
-        
-        # Window's variables
-        self.card1Line1 = Assets_info[1]; self.card1Line2 = Assets_info[2]
-        self.card2Line1 = Assets_info[3]; self.card2Line2 = Assets_info[4]
-        self.card3Line1 = Assets_info[5]; self.card3Line2 = Assets_info[6]
-        self.card4Line1 = Assets_info[7]; self.card4Line2 = Assets_info[8]
-
-        decode_string(Assets_info[1])
-        
-        # top label 
-        self.hours_label = QtWidgets.QLabel(self)
-        self.hours_label.move(40, 20)
-        self.hours_label.setText('Fill your credit card balances and personal loans (up to 4 each)')
-
-        # Balance label 
-        self.Balance_label = QtWidgets.QLabel(self)
-        self.Balance_label.move(160, 50)
-        self.Balance_label.setText('Balance')
-
-        # APR label 
-        self.hours_label = QtWidgets.QLabel(self)
-        self.hours_label.move(265, 50)
-        self.hours_label.setText('APR')
-
-        # Loan Term  label 
-        self.Term_label = QtWidgets.QLabel(self)
-        self.Term_label.move(320, 50)
-        self.Term_label.setText('Loan Term')
-
-        # Credit card1 label
-        self.card1_label = QtWidgets.QLabel(self)
-        self.card1_label.move(20, 80)
-        self.card1_label.setText('Credit Card balance 1:')
-        
-        # Credit card11 line edit
-        self.card11_line = QtWidgets.QLineEdit(self)
-        self.card11_line.setText(decode_string(Assets_info[1]))
-        self.card11_line.setFixedWidth(75)
-        self.card11_line.setObjectName('Balance')
-        self.card11_line.move(150, 80)
-
-        # Credit card12 line edit
-        self.card12_line = QtWidgets.QLineEdit(self)
-        self.card12_line.setText(decode_string(Assets_info[2]))
-        self.card12_line.setFixedWidth(50)
-        self.card12_line.setObjectName('APR')
-        self.card12_line.move(250, 80)
-
-        # Loan Term 1 label 
-        self.Term_label = QtWidgets.QLabel(self)
-        self.Term_label.move(330, 80)
-        self.Term_label.setFixedWidth(50)
-        self.Term_label.setText('N/A')
-
-        # Credit card2 label
-        self.card2_label = QtWidgets.QLabel(self)
-        self.card2_label.move(20, 110)
-        self.card2_label.setText('Credit Card balance 2:')
-        
-        # Credit card21 line edit
-        self.card21_line = QtWidgets.QLineEdit(self)
-        self.card21_line.setText(decode_string(Assets_info[3]))
-        self.card21_line.setFixedWidth(75)
-        self.card21_line.setObjectName('Balance')
-        self.card21_line.move(150, 110)
-
-        # Credit card22 line edit
-        self.card22_line = QtWidgets.QLineEdit(self)
-        self.card22_line.setText(decode_string(Assets_info[4]))
-        self.card22_line.setFixedWidth(50)
-        self.card22_line.setObjectName('APR')
-        self.card22_line.move(250, 110)
-
-        # Loan Term 2 label 
-        self.Term_label = QtWidgets.QLabel(self)
-        self.Term_label.move(330, 110)
-        self.Term_label.setFixedWidth(50)
-        self.Term_label.setText('N/A')
-
-        # Credit card3 label
-        self.card3_label = QtWidgets.QLabel(self)
-        self.card3_label.move(20, 140)
-        self.card3_label.setText('Credit Card balance 3:')
-        
-        # Credit card31 line edit
-        self.card31_line = QtWidgets.QLineEdit(self)
-        self.card31_line.setText(decode_string(Assets_info[5]))
-        self.card31_line.setFixedWidth(75)
-        self.card31_line.setObjectName('Balance')
-        self.card31_line.move(150, 140)
-
-        # Credit card32 line edit
-        self.card32_line = QtWidgets.QLineEdit(self)
-        self.card32_line.setText(decode_string(Assets_info[6]))
-        self.card32_line.setFixedWidth(50)
-        self.card32_line.setObjectName('APR')
-        self.card32_line.move(250, 140)
-
-        # Loan Term 1 label 
-        self.Term_label = QtWidgets.QLabel(self)
-        self.Term_label.move(330, 140)
-        self.Term_label.setFixedWidth(50)
-        self.Term_label.setText('N/A')
-
-        # Credit card4 label
-        self.card4_label = QtWidgets.QLabel(self)
-        self.card4_label.move(20, 170)
-        self.card4_label.setText('Credit Card balance 4:')
-        
-        # Credit card41 line edit
-        self.card41_line = QtWidgets.QLineEdit(self)
-        self.card41_line.setText(decode_string(Assets_info[7]))
-        self.card41_line.setFixedWidth(75)
-        self.card41_line.setObjectName('Balance')
-        self.card41_line.move(150, 170)
-
-        # Credit card42 line edit
-        self.card42_line = QtWidgets.QLineEdit(self)
-        self.card42_line.setText(decode_string(Assets_info[8]))
-        self.card42_line.setFixedWidth(50)
-        self.card42_line.setObjectName('APR')
-        self.card42_line.move(250, 170)
-
-        # Loan Term 4 label 
-        self.Term_label = QtWidgets.QLabel(self)
-        self.Term_label.move(330, 170)
-        self.Term_label.setFixedWidth(50)
-        self.Term_label.setText('N/A')
-
-        # Personal loan1 label
-        self.loan1_label = QtWidgets.QLabel(self)
-        self.loan1_label.move(20, 200)
-        self.loan1_label.setText('Personal Loan 1:')
-        
-        # Personal loan11 line edit
-        self.loan11_line = QtWidgets.QLineEdit(self)
-        self.loan11_line.setText(decode_string(Assets_info[9]))
-        self.loan11_line.setFixedWidth(75)
-        self.loan11_line.setObjectName('Balance')
-        self.loan11_line.move(150, 200)
-
-        # Personal loan12 line edit
-        self.loan12_line = QtWidgets.QLineEdit(self)
-        self.loan12_line.setText(decode_string(Assets_info[10]))
-        self.loan12_line.setFixedWidth(50)
-        self.loan12_line.setObjectName('APR')
-        self.loan12_line.move(250, 200)
-
-        # Personal loan13 line edit
-        self.loan13_line = QtWidgets.QLineEdit(self)
-        self.loan13_line.setText(decode_string(Assets_info[11]))
-        self.loan13_line.setFixedWidth(50)
-        self.loan13_line.setObjectName('loan term')
-        self.loan13_line.move(330, 200)
-
-        # Personal loan2 label
-        self.loan1_label = QtWidgets.QLabel(self)
-        self.loan1_label.move(20, 230)
-        self.loan1_label.setText('Personal Loan 2:')
-        
-        # Personal loan21 line edit
-        self.loan21_line = QtWidgets.QLineEdit(self)
-        self.loan21_line.setText(decode_string(Assets_info[12]))
-        self.loan21_line.setFixedWidth(75)
-        self.loan21_line.setObjectName('Balance')
-        self.loan21_line.move(150, 230)
-
-        # Personal loan12 line edit
-        self.loan22_line = QtWidgets.QLineEdit(self)
-        self.loan22_line.setText(decode_string(Assets_info[13]))
-        self.loan22_line.setFixedWidth(50)
-        self.loan22_line.setObjectName('APR')
-        self.loan22_line.move(250, 230)
-
-        # Personal loan13 line edit
-        self.loan23_line = QtWidgets.QLineEdit(self)
-        self.loan23_line.setText(decode_string(Assets_info[14]))
-        self.loan23_line.setFixedWidth(50)
-        self.loan23_line.setObjectName('loan term')
-        self.loan23_line.move(330, 230)
-
-         # Personal loan3 label
-        self.loan1_label = QtWidgets.QLabel(self)
-        self.loan1_label.move(20, 260)
-        self.loan1_label.setText('Personal Loan 3:')
-        
-        # Personal loan31 line edit
-        self.loan31_line = QtWidgets.QLineEdit(self)
-        self.loan31_line.setText(decode_string(Assets_info[15]))
-        self.loan31_line.setFixedWidth(75)
-        self.loan31_line.setObjectName('Balance')
-        self.loan31_line.move(150, 260)
-
-        # Personal loan32 line edit
-        self.loan32_line = QtWidgets.QLineEdit(self)
-        self.loan32_line.setText(decode_string(Assets_info[16]))
-        self.loan32_line.setFixedWidth(50)
-        self.loan32_line.setObjectName('APR')
-        self.loan32_line.move(250, 260)
-
-        # Personal loan33 line edit
-        self.loan33_line = QtWidgets.QLineEdit(self)
-        self.loan33_line.setText(decode_string(Assets_info[17]))
-        self.loan33_line.setFixedWidth(50)
-        self.loan33_line.setObjectName('loan term')
-        self.loan33_line.move(330, 260)
-
-        # Personal loan4 label
-        self.loan4_label = QtWidgets.QLabel(self)
-        self.loan4_label.move(20, 290)
-        self.loan4_label.setText('Personal Loan 4:')
-        
-        # Personal loan41 line edit
-        self.loan41_line = QtWidgets.QLineEdit(self)
-        self.loan41_line.setText(decode_string(Assets_info[18]))
-        self.loan41_line.setFixedWidth(75)
-        self.loan41_line.setObjectName('Balance')
-        self.loan41_line.move(150, 290)
-
-        # Personal loan42 line edit
-        self.loan42_line = QtWidgets.QLineEdit(self)
-        self.loan42_line.setText(decode_string(Assets_info[19]))
-        self.loan42_line.setFixedWidth(50)
-        self.loan42_line.setObjectName('APR')
-        self.loan42_line.move(250, 290)
-
-        # Personal loan43 line edit
-        self.loan43_line = QtWidgets.QLineEdit(self)
-        self.loan43_line.setText(decode_string(Assets_info[20]))
-        self.loan43_line.setFixedWidth(50)
-        self.loan43_line.setObjectName('loan term')
-        self.loan43_line.move(330, 290)
-
-         # accept button
-        self.accept = QtWidgets.QPushButton(self)
-        self.accept.setText('accept')
-        self.accept.move(110, 320)
-        self.accept.clicked.connect(self.updatingDebt)
-
-        # cancel button
-        self.cancel = QtWidgets.QPushButton(self)
-        self.cancel.setText('Exit')
-        self.cancel.move(205, 320)
-        self.cancel.clicked.connect(self.addFinance)
-        
-        self.show()
-
-    # this function saves the information and return to the dashboard    
-    def updatingDebt(self):
-        """This function calculates updates the total housing expenses"""
-
-        global Monthly_Debt_expenses
-        try:          
-            total = mortgage(float(self.card11_line.text()), float(self.card12_line.text()), 3)
-            total += mortgage(float(self.card21_line.text()), float(self.card22_line.text()), 3)
-            total += mortgage(float(self.card31_line.text()), float(self.card32_line.text()), 3)
-            total += mortgage(float(self.card41_line.text()), float(self.card42_line.text()), 3)
-            total += mortgage(float(self.loan11_line.text()), float(self.loan12_line.text()), float(self.loan13_line.text())/12)
-            total += mortgage(float(self.loan21_line.text()), float(self.loan22_line.text()), float(self.loan23_line.text())/12)
-            total += mortgage(float(self.loan31_line.text()), float(self.loan32_line.text()), float(self.loan33_line.text())/12)
-            total += mortgage(float(self.loan41_line.text()), float(self.loan42_line.text()), float(self.loan43_line.text())/12)
-
-        except:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
-            return
-        
-        if Monthly_Debt_expenses != total:
-            Monthly_Debt_expenses = total
-        
         with open('Assets_Dbase', 'a+') as DB:
             DB.seek(0)
             whole_text = DB.readlines()
@@ -1190,17 +1067,9 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
         with open('Assets_Dbase', 'w') as DB:    
             for line in whole_text:
                 if str(User_Id) == decode_string(line.split()[0]):
-                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.card11_line.text())} ") 
-                    DB.write(f"{decode_string(str(self.card12_line.text()))} {decode_string(str(self.card21_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.card22_line.text()))} {decode_string(str(self.card31_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.card32_line.text()))} {decode_string(str(self.card41_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.card42_line.text()))} {decode_string(str(self.loan11_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan12_line.text()))} {decode_string(str(self.loan13_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan21_line.text()))} {decode_string(str(self.loan22_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan23_line.text()))} {decode_string(str(self.loan31_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan32_line.text()))} {decode_string(str(self.loan33_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan41_line.text()))} {decode_string(str(self.loan42_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan43_line.text()))}  \n")   
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.checking_line.text())} ") 
+                    DB.write(f"{decode_string(str(self.saving_line.text()))} {decode_string(str(self.bonds_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.stocks_line.text()))} {decode_string(str(self.cash_line.text()))} \n")   
                     continue
                 DB.write(line)
             DB.close()    
@@ -1224,7 +1093,402 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
                     return info    
                    
             DB.write(f"{decode_string(str(User_Id))} ")
-            DB.write(decode_string('0.0 ') * 20)
+            DB.write(decode_string('0.0 ') * 5)
+            DB.write('\n')
+            DB.close()
+            self.input_loader()
+
+     # creates an object type addFinances to closes current window without changes
+    def addFinance(self):
+        self.close()
+        self.Finances = Financial_box()
+        self.Finances.show()
+    
+    #-------------------------Debt window--------------------------
+class add_Unsecured_Debts(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(600, 600, 530, 350)
+        self.setWindowTitle('Adding Unsecured Debts')
+        
+        # Creating the file
+        self.input_loader()
+       
+        #loading saved info
+        Debts_info = self.input_loader()
+        
+        # top label 
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(40, 20)
+        self.hours_label.setText('Fill your credit card balances and personal loans (up to 4 each)')
+
+        # Balance label 
+        self.Balance_label = QtWidgets.QLabel(self)
+        self.Balance_label.move(160, 50)
+        self.Balance_label.setText('Balance')
+
+        # APR label 
+        self.hours_label = QtWidgets.QLabel(self)
+        self.hours_label.move(265, 50)
+        self.hours_label.setText('APR')
+
+        # Loan Term  label 
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(320, 50)
+        self.Term_label.setText('Loan Term')
+
+        # Monthly Payment  label 
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(420, 50)
+        self.Term_label.setText('Monthly Payment')
+
+        # Credit card1 label
+        self.card1_label = QtWidgets.QLabel(self)
+        self.card1_label.move(20, 80)
+        self.card1_label.setText('Credit Card balance 1:')
+        
+        # Credit card11 line edit
+        self.card11_line = QtWidgets.QLineEdit(self)
+        self.card11_line.setText(decode_string(Debts_info[1]))
+        self.card11_line.setFixedWidth(75)
+        self.card11_line.setObjectName('Balance')
+        self.card11_line.move(150, 80)
+
+        # Credit card12 line edit
+        self.card12_line = QtWidgets.QLineEdit(self)
+        self.card12_line.setText(decode_string(Debts_info[2]))
+        self.card12_line.setFixedWidth(50)
+        self.card12_line.setObjectName('APR')
+        self.card12_line.move(250, 80)
+
+        # Loan Term 1 label 
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(330, 80)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText('N/A')
+
+        # Monthly Payment label 1
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 80)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[21])}')
+
+        # Credit card2 label
+        self.card2_label = QtWidgets.QLabel(self)
+        self.card2_label.move(20, 110)
+        self.card2_label.setText('Credit Card balance 2:')
+        
+        # Credit card21 line edit
+        self.card21_line = QtWidgets.QLineEdit(self)
+        self.card21_line.setText(decode_string(Debts_info[3]))
+        self.card21_line.setFixedWidth(75)
+        self.card21_line.setObjectName('Balance')
+        self.card21_line.move(150, 110)
+
+        # Credit card22 line edit
+        self.card22_line = QtWidgets.QLineEdit(self)
+        self.card22_line.setText(decode_string(Debts_info[4]))
+        self.card22_line.setFixedWidth(50)
+        self.card22_line.setObjectName('APR')
+        self.card22_line.move(250, 110)
+
+        # Loan Term 2 label 
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(330, 110)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText('N/A')
+
+        # Monthly Payment label 2
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 110)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[22])}')
+
+        # Credit card3 label
+        self.card3_label = QtWidgets.QLabel(self)
+        self.card3_label.move(20, 140)
+        self.card3_label.setText('Credit Card balance 3:')
+        
+        # Credit card31 line edit
+        self.card31_line = QtWidgets.QLineEdit(self)
+        self.card31_line.setText(decode_string(Debts_info[5]))
+        self.card31_line.setFixedWidth(75)
+        self.card31_line.setObjectName('Balance')
+        self.card31_line.move(150, 140)
+
+        # Credit card32 line edit
+        self.card32_line = QtWidgets.QLineEdit(self)
+        self.card32_line.setText(decode_string(Debts_info[6]))
+        self.card32_line.setFixedWidth(50)
+        self.card32_line.setObjectName('APR')
+        self.card32_line.move(250, 140)
+
+        # Loan Term 3 label 
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(330, 140)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText('N/A')
+
+        # Monthly Payment label 3
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 140)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[23])}')
+
+        # Credit card4 label
+        self.card4_label = QtWidgets.QLabel(self)
+        self.card4_label.move(20, 170)
+        self.card4_label.setText('Credit Card balance 4:')
+        
+        # Credit card41 line edit
+        self.card41_line = QtWidgets.QLineEdit(self)
+        self.card41_line.setText(decode_string(Debts_info[7]))
+        self.card41_line.setFixedWidth(75)
+        self.card41_line.setObjectName('Balance')
+        self.card41_line.move(150, 170)
+
+        # Credit card42 line edit
+        self.card42_line = QtWidgets.QLineEdit(self)
+        self.card42_line.setText(decode_string(Debts_info[8]))
+        self.card42_line.setFixedWidth(50)
+        self.card42_line.setObjectName('APR')
+        self.card42_line.move(250, 170)
+
+        # Loan Term 4 label 
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(330, 170)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText('N/A')
+
+        # Monthly Payment label 4
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 170)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[24])}')
+
+        # Personal loan1 label
+        self.loan1_label = QtWidgets.QLabel(self)
+        self.loan1_label.move(20, 200)
+        self.loan1_label.setText('Personal Loan 1:')
+        
+        # Personal loan11 line edit
+        self.loan11_line = QtWidgets.QLineEdit(self)
+        self.loan11_line.setText(decode_string(Debts_info[9]))
+        self.loan11_line.setFixedWidth(75)
+        self.loan11_line.setObjectName('Balance')
+        self.loan11_line.move(150, 200)
+
+        # Personal loan12 line edit
+        self.loan12_line = QtWidgets.QLineEdit(self)
+        self.loan12_line.setText(decode_string(Debts_info[10]))
+        self.loan12_line.setFixedWidth(50)
+        self.loan12_line.setObjectName('APR')
+        self.loan12_line.move(250, 200)
+
+        # Personal loan13 line edit
+        self.loan13_line = QtWidgets.QLineEdit(self)
+        self.loan13_line.setText(decode_string(Debts_info[11]))
+        self.loan13_line.setFixedWidth(50)
+        self.loan13_line.setObjectName('loan term')
+        self.loan13_line.move(330, 200)
+
+        # Monthly Payment label 5
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 200)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[25])}')
+
+        # Personal loan2 label
+        self.loan1_label = QtWidgets.QLabel(self)
+        self.loan1_label.move(20, 230)
+        self.loan1_label.setText('Personal Loan 2:')
+        
+        # Personal loan21 line edit
+        self.loan21_line = QtWidgets.QLineEdit(self)
+        self.loan21_line.setText(decode_string(Debts_info[12]))
+        self.loan21_line.setFixedWidth(75)
+        self.loan21_line.setObjectName('Balance')
+        self.loan21_line.move(150, 230)
+
+        # Personal loan22 line edit
+        self.loan22_line = QtWidgets.QLineEdit(self)
+        self.loan22_line.setText(decode_string(Debts_info[13]))
+        self.loan22_line.setFixedWidth(50)
+        self.loan22_line.setObjectName('APR')
+        self.loan22_line.move(250, 230)
+
+        # Personal loan23 line edit
+        self.loan23_line = QtWidgets.QLineEdit(self)
+        self.loan23_line.setText(decode_string(Debts_info[14]))
+        self.loan23_line.setFixedWidth(50)
+        self.loan23_line.setObjectName('loan term')
+        self.loan23_line.move(330, 230)
+
+        # Monthly Payment label 6
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 230)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[26])}')
+
+         # Personal loan3 label
+        self.loan1_label = QtWidgets.QLabel(self)
+        self.loan1_label.move(20, 260)
+        self.loan1_label.setText('Personal Loan 3:')
+        
+        # Personal loan31 line edit
+        self.loan31_line = QtWidgets.QLineEdit(self)
+        self.loan31_line.setText(decode_string(Debts_info[15]))
+        self.loan31_line.setFixedWidth(75)
+        self.loan31_line.setObjectName('Balance')
+        self.loan31_line.move(150, 260)
+
+        # Personal loan32 line edit
+        self.loan32_line = QtWidgets.QLineEdit(self)
+        self.loan32_line.setText(decode_string(Debts_info[16]))
+        self.loan32_line.setFixedWidth(50)
+        self.loan32_line.setObjectName('APR')
+        self.loan32_line.move(250, 260)
+
+        # Personal loan33 line edit
+        self.loan33_line = QtWidgets.QLineEdit(self)
+        self.loan33_line.setText(decode_string(Debts_info[17]))
+        self.loan33_line.setFixedWidth(50)
+        self.loan33_line.setObjectName('loan term')
+        self.loan33_line.move(330, 260)
+
+        # Monthly Payment label 7
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 260)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[27])}')
+
+        # Personal loan4 label
+        self.loan4_label = QtWidgets.QLabel(self)
+        self.loan4_label.move(20, 290)
+        self.loan4_label.setText('Personal Loan 4:')
+        
+        # Personal loan41 line edit
+        self.loan41_line = QtWidgets.QLineEdit(self)
+        self.loan41_line.setText(decode_string(Debts_info[18]))
+        self.loan41_line.setFixedWidth(75)
+        self.loan41_line.setObjectName('Balance')
+        self.loan41_line.move(150, 290)
+
+        # Personal loan42 line edit
+        self.loan42_line = QtWidgets.QLineEdit(self)
+        self.loan42_line.setText(decode_string(Debts_info[19]))
+        self.loan42_line.setFixedWidth(50)
+        self.loan42_line.setObjectName('APR')
+        self.loan42_line.move(250, 290)
+
+        # Personal loan43 line edit
+        self.loan43_line = QtWidgets.QLineEdit(self)
+        self.loan43_line.setText(decode_string(Debts_info[20]))
+        self.loan43_line.setFixedWidth(50)
+        self.loan43_line.setObjectName('loan term')
+        self.loan43_line.move(330, 290)
+
+        # Monthly Payment label 8
+        self.Term_label = QtWidgets.QLabel(self)
+        self.Term_label.move(450, 290)
+        self.Term_label.setFixedWidth(50)
+        self.Term_label.setText(f'{decode_string(Debts_info[28])}')
+
+         # accept button
+        self.accept = QtWidgets.QPushButton(self)
+        self.accept.setText('accept')
+        self.accept.move(165, 320)
+        self.accept.clicked.connect(self.updatingDebt)
+
+        # cancel button
+        self.cancel = QtWidgets.QPushButton(self)
+        self.cancel.setText('Exit')
+        self.cancel.move(330, 320)
+        self.cancel.clicked.connect(self.addFinance)
+        
+        self.show()
+
+    # this function saves the information and return to the dashboard    
+    def updatingDebt(self):
+        """This function calculates updates the total debts"""
+
+        if float(self.loan11_line.text()) != 0 and float(self.loan13_line.text()) == 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
+            return
+        if float(self.loan21_line.text()) != 0 and float(self.loan23_line.text()) == 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
+            return
+        if float(self.loan31_line.text()) != 0 and float(self.loan33_line.text()) == 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
+            return
+        if float(self.loan41_line.text()) != 0 and float(self.loan43_line.text()) == 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
+            return    
+        
+        global Monthly_Debt_expenses
+        try:          
+            balance1 = mortgage(float(self.card11_line.text()), float(self.card12_line.text()), 3)
+            balance2 = mortgage(float(self.card21_line.text()), float(self.card22_line.text()), 3)
+            balance3 = mortgage(float(self.card31_line.text()), float(self.card32_line.text()), 3)
+            balance4 = mortgage(float(self.card41_line.text()), float(self.card42_line.text()), 3)
+            balance5 = mortgage(float(self.loan11_line.text()), float(self.loan12_line.text()), round(float(self.loan13_line.text())/12), 2)
+            balance6 = mortgage(float(self.loan21_line.text()), float(self.loan22_line.text()), round(float(self.loan23_line.text())/12), 2)
+            balance7 = mortgage(float(self.loan31_line.text()), float(self.loan32_line.text()), round(float(self.loan33_line.text())/12), 2)
+            balance8 = mortgage(float(self.loan41_line.text()), float(self.loan42_line.text()), round(float(self.loan43_line.text())/12), 2)
+            
+            total = balance1 + balance2 + balance3 + balance4 + balance5 + balance5 + balance6 + balance7 + balance8
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+        
+        if Monthly_Debt_expenses != total:
+            Monthly_Debt_expenses = total
+        
+        with open('Debts_Dbase', 'a+') as DB:
+            DB.seek(0)
+            whole_text = DB.readlines()
+            DB.close()
+        with open('Debts_Dbase', 'w') as DB:    
+            for line in whole_text:
+                if str(User_Id) == decode_string(line.split()[0]):
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.card11_line.text())} ") 
+                    DB.write(f"{decode_string(str(self.card12_line.text()))} {decode_string(str(self.card21_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.card22_line.text()))} {decode_string(str(self.card31_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.card32_line.text()))} {decode_string(str(self.card41_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.card42_line.text()))} {decode_string(str(self.loan11_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.loan12_line.text()))} {decode_string(str(self.loan13_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.loan21_line.text()))} {decode_string(str(self.loan22_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.loan23_line.text()))} {decode_string(str(self.loan31_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.loan32_line.text()))} {decode_string(str(self.loan33_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.loan41_line.text()))} {decode_string(str(self.loan42_line.text()))} ")
+                    DB.write(f"{decode_string(str(self.loan43_line.text()))} {decode_string(str(balance1))} ") 
+                    DB.write(f"{decode_string(str(balance2))} {decode_string(str(balance3))} {decode_string(str(balance4))} ") 
+                    DB.write(f"{decode_string(str(balance5))} {decode_string(str(balance6))} {decode_string(str(balance7))} ")  
+                    DB.write(f"{decode_string(str(balance8))}\n")    
+                    continue
+                DB.write(line)
+            DB.close()    
+        self.close()
+        info_Saver(Username, Password)
+        self.return_window = Financial_box()
+        self.return_window.show()
+    
+    # This function load/creates debts info 
+    def input_loader(self):
+        """This function loads current input"""     
+
+        with open('Debts_Dbase', 'a+') as DB:
+            DB.seek(0)
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+
+                if str(User_Id) == decode_string(info[0]):
+                    return info    
+                   
+            DB.write(f"{decode_string(str(User_Id))} ")
+            DB.write(decode_string('0.0 ') * 28)
             DB.write('\n')
             DB.close()
             self.input_loader()
