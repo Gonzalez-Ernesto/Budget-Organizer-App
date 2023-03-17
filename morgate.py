@@ -1,6 +1,6 @@
 #*******************************GRAPHIC USER INTERFACE*******************
 import sys , random, matplotlib.pyplot as ptl
-from matplotlib.backends.backend_agg import FigureCanvasAgg as graph
+from matplotlib.backends.backend_agg import FigureCanvasAgg as Canvas
 from matplotlib.figure import Figure
 
 from PyQt5 import QtWidgets
@@ -138,9 +138,9 @@ class User_box(QtWidgets.QWidget):
         """This function process all entered information and writes it on a file"""
         
         # these varaiables store the inputs
-        userName = self.Username.text()
-        password = self.Password.text()
-        password2 = self.Re_enterpassword.text() 
+        userName = self.Username.text().strip()
+        password = self.Password.text().strip()
+        password2 = self.Re_enterpassword.text().strip() 
         
         taken = False
 
@@ -279,7 +279,7 @@ class Login_box(QtWidgets.QWidget):
     def logging(self):
         """This function analyses the input from user"""
 
-        if  info_Loader(self.Username.text(), self.Password.text()):
+        if  info_Loader(self.Username.text().strip(), self.Password.text().strip()):
                 QtWidgets.QMessageBox.information(self, 'Sucess', 'you are logged in')
                 self.close()
                 global Interactive_layout 
@@ -358,10 +358,6 @@ class Financial_box(QtWidgets.QWidget):
         dependent_label = QtWidgets.QLabel(self)
         dependent_label.setFixedSize(QSize(200, 50))
         dependent_label.setText(f'Dependents: {dependent_list}')
-         
-        
-        
-        
         
         Label_layout = QGridLayout()
         Label_layout.addWidget(income_label, 0, 0)
@@ -394,7 +390,6 @@ class Financial_box(QtWidgets.QWidget):
         #Creating the layout manager
         layout_manager = QHBoxLayout()
         layout_manager.addLayout(LabelBUtton_layout, 50)
-        layout_manager.addLayout(Graph_layout, 50)
         self.setLayout(layout_manager)
 
         self.show()
@@ -508,7 +503,7 @@ class add_income(QtWidgets.QWidget):
         
         global Monthly_Income
         try:
-            total = income(float(self.rate_line.text()), float(self.hours_line.text()))
+            total = income(float(self.rate_line.text().strip()), float(self.hours_line.text().strip()))
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
             return
@@ -523,8 +518,8 @@ class add_income(QtWidgets.QWidget):
         with open('Income_Dbase', 'w') as DB:    
             for line in whole_text:
                 if str(User_Id) == decode_string(line.split()[0]):
-                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.rate_line.text())} ") 
-                    DB.write(f"{decode_string(str(self.hours_line.text()))} \n")   
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.rate_line.text().strip())} ") 
+                    DB.write(f"{decode_string(self.hours_line.text().strip())} \n")   
                     continue
                 DB.write(line)
             DB.close()    
@@ -682,10 +677,10 @@ class add_housing(QtWidgets.QWidget):
         
         global Monthly_housing_expenses
         try:
-            total = float(self.payment_line.text()) + float(self.insurance_line.text())
-            total += float(self.electric_line.text()) + float(self.Internet_line.text())
-            total += float(self.taxes_line.text()) + float(self.HOA_line.text())
-            total += float(self.gas_line.text())
+            total = float(self.payment_line.text().strip()) + float(self.insurance_line.text().strip())
+            total += float(self.electric_line.text().strip()) + float(self.Internet_line.text().strip())
+            total += float(self.taxes_line.text().strip()) + float(self.HOA_line.text().strip())
+            total += float(self.gas_line.text().strip())
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
             return
@@ -701,10 +696,10 @@ class add_housing(QtWidgets.QWidget):
         with open('Housing_Dbase', 'w') as DB:    
             for line in whole_text:
                 if str(User_Id) == decode_string(line.split()[0]):
-                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.payment_line.text())} ") 
-                    DB.write(f"{decode_string(str(self.insurance_line.text()))} {decode_string(str(self.electric_line.text()))} ") 
-                    DB.write(f"{decode_string(str(self.Internet_line.text()))} {decode_string(str(self.taxes_line.text()))} ") 
-                    DB.write(f"{decode_string(str(self.HOA_line.text()))} {decode_string(str(self.gas_line.text()))} \n")   
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.payment_line.text().strip())} ") 
+                    DB.write(f"{decode_string(self.insurance_line.text().strip())} {decode_string(self.electric_line.text().strip())} ") 
+                    DB.write(f"{decode_string(self.Internet_line.text().strip())} {decode_string(self.taxes_line.text().strip())} ") 
+                    DB.write(f"{decode_string(self.HOA_line.text().strip())} {decode_string(self.gas_line.text().strip())} \n")   
                     continue
                 DB.write(line)
             DB.close() 
@@ -840,8 +835,8 @@ class add_transportation(QtWidgets.QWidget):
         global Monthly_transportation_expenses
         
         try:
-            total = float(self.payment_line.text()) + float(self.insurance_line.text())
-            total += float(self.mileage_line.text()) * 0.0955 + int(self.mileage_line.text()) * 0.09 
+            total = float(self.payment_line.text().strip()) + float(self.insurance_line.text().strip())
+            total += float(self.mileage_line.text().strip()) * 0.0955 + float(self.mileage_line.text().strip()) * 0.09 
             
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
@@ -857,8 +852,8 @@ class add_transportation(QtWidgets.QWidget):
         with open('Transportation_Dbase', 'w') as DB:    
             for line in whole_text:
                 if str(User_Id) == decode_string(line.split()[0]):
-                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.payment_line.text())} ") 
-                    DB.write(f"{decode_string(str(self.insurance_line.text()))} {decode_string(str(self.mileage_line.text()))} \n")   
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.payment_line.text().strip())} ") 
+                    DB.write(f"{decode_string(self.insurance_line.text().strip())} {decode_string(self.mileage_line.text().strip())} \n")   
                     continue
                 DB.write(line)
             DB.close()    
@@ -951,7 +946,7 @@ class add_dependents(QtWidgets.QWidget):
             return
         else:        
             try:
-                text = self.dependents_line.text().replace(',', ' ')
+                text = self.dependents_line.text().strip().replace(',', ' ')
                 total = list(text.split())
     
             except:
@@ -1091,9 +1086,9 @@ class add_Assets(QtWidgets.QWidget):
         
         global Total_assets
         try:
-            total = float(self.checking_line.text()) + float(self.saving_line.text())
-            total += float(self.bonds_line.text()) + float(self.stocks_line.text())
-            total += float(self.cash_line.text())
+            total = float(self.checking_line.text().strip()) + float(self.saving_line.text().strip())
+            total += float(self.bonds_line.text().strip()) + float(self.stocks_line.text().strip())
+            total += float(self.cash_line.text().strip())
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
             return
@@ -1109,9 +1104,9 @@ class add_Assets(QtWidgets.QWidget):
         with open('Assets_Dbase', 'w') as DB:    
             for line in whole_text:
                 if str(User_Id) == decode_string(line.split()[0]):
-                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.checking_line.text())} ") 
-                    DB.write(f"{decode_string(str(self.saving_line.text()))} {decode_string(str(self.bonds_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.stocks_line.text()))} {decode_string(str(self.cash_line.text()))} \n")   
+                    DB.write(f"{decode_string(str(User_Id))} {decode_string(self.checking_line.text().strip())} ") 
+                    DB.write(f"{decode_string(self.saving_line.text().strip())} {decode_string(self.bonds_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.stocks_line.text().strip())} {decode_string(self.cash_line.text().strip())} \n")   
                     continue
                 DB.write(line)
             DB.close()    
@@ -1456,29 +1451,29 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
     def updatingDebt(self):
         """This function calculates updates the total debts"""
 
-        if float(self.loan11_line.text()) != 0 and float(self.loan13_line.text()) == 0:
+        if float(self.loan11_line.text().strip()) != 0 and float(self.loan13_line.text().strip()) == 0:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
             return
-        if float(self.loan21_line.text()) != 0 and float(self.loan23_line.text()) == 0:
+        if float(self.loan21_line.text().strip()) != 0 and float(self.loan23_line.text().strip()) == 0:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
             return
-        if float(self.loan31_line.text()) != 0 and float(self.loan33_line.text()) == 0:
+        if float(self.loan31_line.text().strip()) != 0 and float(self.loan33_line.text().strip()) == 0:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
             return
-        if float(self.loan41_line.text()) != 0 and float(self.loan43_line.text()) == 0:
+        if float(self.loan41_line.text().strip()) != 0 and float(self.loan43_line.text().strip()) == 0:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
             return    
         
         global Monthly_Debt_expenses
         try:          
-            balance1 = mortgage(float(self.card11_line.text()), float(self.card12_line.text()), 3)
-            balance2 = mortgage(float(self.card21_line.text()), float(self.card22_line.text()), 3)
-            balance3 = mortgage(float(self.card31_line.text()), float(self.card32_line.text()), 3)
-            balance4 = mortgage(float(self.card41_line.text()), float(self.card42_line.text()), 3)
-            balance5 = mortgage(float(self.loan11_line.text()), float(self.loan12_line.text()), round(float(self.loan13_line.text())/12), 2)
-            balance6 = mortgage(float(self.loan21_line.text()), float(self.loan22_line.text()), round(float(self.loan23_line.text())/12), 2)
-            balance7 = mortgage(float(self.loan31_line.text()), float(self.loan32_line.text()), round(float(self.loan33_line.text())/12), 2)
-            balance8 = mortgage(float(self.loan41_line.text()), float(self.loan42_line.text()), round(float(self.loan43_line.text())/12), 2)
+            balance1 = mortgage(float(self.card11_line.text().strip()), float(self.card12_line.text().strip()), 3)
+            balance2 = mortgage(float(self.card21_line.text().strip()), float(self.card22_line.text().strip()), 3)
+            balance3 = mortgage(float(self.card31_line.text().strip()), float(self.card32_line.text().strip()), 3)
+            balance4 = mortgage(float(self.card41_line.text().strip()), float(self.card42_line.text().strip()), 3)
+            balance5 = mortgage(float(self.loan11_line.text().strip()), float(self.loan12_line.text().strip()), round(float(self.loan13_line.text().strip())/12), 2)
+            balance6 = mortgage(float(self.loan21_line.text().strip()), float(self.loan22_line.text().strip()), round(float(self.loan23_line.text().strip())/12), 2)
+            balance7 = mortgage(float(self.loan31_line.text().strip()), float(self.loan32_line.text().strip()), round(float(self.loan33_line.text().strip())/12), 2)
+            balance8 = mortgage(float(self.loan41_line.text().strip()), float(self.loan42_line.text().strip()), round(float(self.loan43_line.text().strip())/12), 2)
             
             total = balance1 + balance2 + balance3 + balance4 + balance5 + balance5 + balance6 + balance7 + balance8
         except:
@@ -1497,16 +1492,16 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
             for line in whole_text:
                 if str(User_Id) == decode_string(line.split()[0]):
                     DB.write(f"{decode_string(str(User_Id))} {decode_string(self.card11_line.text())} ") 
-                    DB.write(f"{decode_string(str(self.card12_line.text()))} {decode_string(str(self.card21_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.card22_line.text()))} {decode_string(str(self.card31_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.card32_line.text()))} {decode_string(str(self.card41_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.card42_line.text()))} {decode_string(str(self.loan11_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan12_line.text()))} {decode_string(str(self.loan13_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan21_line.text()))} {decode_string(str(self.loan22_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan23_line.text()))} {decode_string(str(self.loan31_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan32_line.text()))} {decode_string(str(self.loan33_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan41_line.text()))} {decode_string(str(self.loan42_line.text()))} ")
-                    DB.write(f"{decode_string(str(self.loan43_line.text()))} {decode_string(str(balance1))} ") 
+                    DB.write(f"{decode_string(self.card12_line.text().strip())} {decode_string(self.card21_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.card22_line.text().strip())} {decode_string(self.card31_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.card32_line.text().strip())} {decode_string(self.card41_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.card42_line.text().strip())} {decode_string(self.loan11_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.loan12_line.text().strip())} {decode_string(self.loan13_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.loan21_line.text().strip())} {decode_string(self.loan22_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.loan23_line.text().strip())} {decode_string(self.loan31_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.loan32_line.text().strip())} {decode_string(self.loan33_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.loan41_line.text().strip())} {decode_string(self.loan42_line.text().strip())} ")
+                    DB.write(f"{decode_string(self.loan43_line.text().strip())} {decode_string(str(balance1))} ") 
                     DB.write(f"{decode_string(str(balance2))} {decode_string(str(balance3))} {decode_string(str(balance4))} ") 
                     DB.write(f"{decode_string(str(balance5))} {decode_string(str(balance6))} {decode_string(str(balance7))} ")  
                     DB.write(f"{decode_string(str(balance8))}\n")    
@@ -1546,6 +1541,8 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
         self.close()
         global Interactive_layout 
         Interactive_layout.addWidget(Financial_box())
+#--------graph window
+
 
 #********************CREATING THE APP*********************************           
 def AppBox():
