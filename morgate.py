@@ -1,47 +1,60 @@
 #*******************************GRAPHIC USER INTERFACE*******************
 import sys , random, matplotlib.pyplot as ptl
 from matplotlib.backends.backend_agg import FigureCanvasAgg as graph
-#from matplotlib.figure import
+from matplotlib.figure import Figure
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QHBoxLayout, QVBoxLayout, QPushButton, QStackedLayout, QLabel, QGridLayout
+from PyQt5.QtCore import  QRect, QPropertyAnimation, QSize
 
+
+#----------------Main Window---------------------------------
 class App_Window(QtWidgets.QWidget):
     def __init__(self, * args, ** kwargs):
         super().__init__(* args, ** kwargs)
-        self.setGeometry(300,300, 600, 600)
+        self.setGeometry(300, 300, 600, 600)
         self.setWindowTitle('Budget Organizer')
         
-        self.sign_up = QtWidgets.QPushButton(self)
-        self.sign_up.setText('Create Account')
-        self.sign_up.adjustSize()
-        self.sign_up.move(100, 170)
-        self.sign_up.clicked.connect(self.signup)
-
-        self.sign_in = QtWidgets.QPushButton(self)
-        self.sign_in.setText('Login')
-        self.sign_in.adjustSize()
-        self.sign_in.move(200, 170)
-        self.sign_in.clicked.connect(self.login) 
-
-        self.Exit = QtWidgets.QPushButton(self)
-        self.Exit.setText('Exit')
-        self.Exit.adjustSize()
-        self.Exit.move(300, 170)
-        self.Exit.clicked.connect(self.close)  
-        
+        global Interactive_layout
+        Interactive_layout = QVBoxLayout()
+        Interactive_layout.addWidget(Menu_Window())
+        self.setLayout(Interactive_layout)
+    
         self.show()
 
+#---------------Menu Window------------------------------------------------
+class Menu_Window(QtWidgets.QWidget):
+    def __init__(self, * args, ** kwargs):
+        super().__init__(* args, ** kwargs)
+        self.setGeometry(300, 300, 600, 600)
+        self.setWindowTitle('Menu')
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(QPushButton('Create Account', clicked = self.signup))
+        button_layout.addWidget(QPushButton('Login', clicked = self.login))
+        button_layout.addWidget(QPushButton('Exit', clicked = closing))
+
+        #Creating the layout manager
+        layout_manager = QHBoxLayout()
+        layout_manager.addLayout(button_layout)
+        self.setLayout(layout_manager)
+    
+        self.show()
+    
     def signup(self):
-        self.CreateUser = User_box()
-        self.CreateUser.show()
         self.close()
+        global Interactive_layout
+        Interactive_layout.addWidget(User_box())
 
     def login(self):
-        self.log = Login_box()
-        self.log.show()
         self.close()
-        
+        global Interactive_layout 
+        Interactive_layout.addWidget(Login_box())
+
+def closing():
+    sys.exit()
+
  #************ADD_USER_WINDOW*********COMPLETED******************       
 class User_box(QtWidgets.QWidget):
     """This class creates a new user"""
@@ -111,23 +124,16 @@ class User_box(QtWidgets.QWidget):
         self.cancel = QtWidgets.QPushButton(self)
         self.cancel.setText('Cancel')
         self.cancel.move(180, 250)
-        self.cancel.clicked.connect(self.mainWin)
+        self.cancel.clicked.connect(self.closing)
         
         # showing the window
         self.show()
 
-    # returns tu main window    
-    def mainWin(self):
-        self.Main_Window = App_Window()
-        self.Main_Window.show()
+    def closing(self):
         self.close()
-    
-    # redirect to log in window
-    def login(self):
-        self.log = Login_box()
-        self.log.show()
-        self.close()
-        
+        global Interactive_layout
+        Interactive_layout.addWidget(Menu_Window())
+
     def saving_name(self):
         """This function process all entered information and writes it on a file"""
         
@@ -194,9 +200,6 @@ class User_box(QtWidgets.QWidget):
 
                     DB.close()
             
-            
-            
-            
             # writing user information
             with open('Data_base', 'a+') as  DB:
                 DB.write(decode_string(userName) + ' ')
@@ -207,8 +210,8 @@ class User_box(QtWidgets.QWidget):
                 DB.close()
             QtWidgets.QMessageBox.information(self, 'Success', 'your information was saved')
             self.close()
-            self.login()
-           
+            global Interactive_layout 
+            Interactive_layout.addWidget(Login_box())   
 #************LOGIN_WINDOW***************************       
 class Login_box(QtWidgets.QWidget):
     """This window allows the usser to log in """
@@ -258,37 +261,33 @@ class Login_box(QtWidgets.QWidget):
         self.accept.clicked.connect(self.logging)
 
         # cancel button
-        self.cancel = QtWidgets.QPushButton(self)
-        self.cancel.setText('Cancel')
-        self.cancel.move(180, 170)
-        self.cancel.clicked.connect(self.mainWin)
+        cancel = QtWidgets.QPushButton(self)
+        cancel.setText('Cancel')
+        cancel.move(180, 170)
+        cancel.clicked.connect(self.closing)
         
         # showing the window
         self.show()
     
-    # returns tu main window    
-    def mainWin(self):
-        self.Main_Window = App_Window()
-        self.Main_Window.show()
+
+    def closing(self):
         self.close()
+        global Interactive_layout
+        Interactive_layout.addWidget(Menu_Window())
 
     # search for the user
     def logging(self):
         """This function analyses the input from user"""
 
-       
         if  info_Loader(self.Username.text(), self.Password.text()):
                 QtWidgets.QMessageBox.information(self, 'Sucess', 'you are logged in')
                 self.close()
-                self.addFinance()
+                global Interactive_layout 
+                Interactive_layout.addWidget(Financial_box())
 
         else:
                 QtWidgets.QMessageBox.critical(self, 'Try Again', 'Wrong User or Passwords ')    
-    
-    def addFinance(self):
-        self.Finances = Financial_box()
-        self.Finances.show()
-   
+
 #************FINANCE_WINDOW***************************       
 class Financial_box(QtWidgets.QWidget):
     """This window adds financial information """
@@ -300,132 +299,153 @@ class Financial_box(QtWidgets.QWidget):
 
         info_Loader(Username, Password)
 
-        # income label
-        self.income_label = QtWidgets.QLabel(self)
-        self.income_label.move(40, 50)
-        self.income_label.setText(f'Monthly income: {Monthly_Income} ')
-
-        # asset label 
-        self.asset_label = QtWidgets.QLabel(self)
-        self.asset_label.move(250, 50)
-        self.asset_label.setText(f'Total assets: {Total_assets}')
-
-        # transportation label 
-        self.transportation_label = QtWidgets.QLabel(self)
-        self.transportation_label.move(40, 80)
-        self.transportation_label.setText(f'Monthly transportation expenses: {Monthly_transportation_expenses}')
-
-        # housing label 
-        self.housing_label = QtWidgets.QLabel(self)
-        self.housing_label.move(250, 80)
-        self.housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
-
-        # debts label 
-        self.housing_label = QtWidgets.QLabel(self)
-        self.housing_label.move(40, 110)
-        self.housing_label.setText(f'Total monthly debt obligations: {Monthly_Debt_expenses}')
-
-        # dependent label
-        self.dependent_label = QtWidgets.QLabel(self)
-        self.dependent_label.move(250, 110)
-        self.dependent_label.setText(f'Dependents: {dependent_list}')
-         
         # add assets button
-        self.assets_button = QtWidgets.QPushButton(self)
-        self.assets_button.setText('Assets')
-        self.assets_button.move(20, 160)
-        self.assets_button.clicked.connect(self.add_Assets)
+        assets_button = QtWidgets.QPushButton(self)
+        assets_button.setText('Assets')
+        assets_button.clicked.connect(self.add_Assets)
 
         # add dependents button
-        self.dependents_button = QtWidgets.QPushButton(self)
-        self.dependents_button.setText('Dependants')
-        self.dependents_button.move(115, 160)
-        self.dependents_button.clicked.connect(self.add_dependents)
+        dependents_button = QtWidgets.QPushButton(self)
+        dependents_button.setText('Dependants')
+        dependents_button.clicked.connect(self.add_dependents)
         
         # add income button
-        self.income_button = QtWidgets.QPushButton(self)
-        self.income_button.setText('Income')
-        self.income_button.move(210, 160)
-        self.income_button.clicked.connect(self.add_income_window)
+        income_button = QtWidgets.QPushButton(self)
+        income_button.setText('Income')
+        income_button.clicked.connect(self.add_income_window)
 
         # add transportation expenses button
-        self.transportation_button = QtWidgets.QPushButton(self)
-        self.transportation_button.setText('Transportation')
-        self.transportation_button.move(305, 160)
-        self.transportation_button.clicked.connect(self.add_transportation)
+        transportation_button = QtWidgets.QPushButton(self)
+        transportation_button.setText('Transportation')
+        transportation_button.clicked.connect(self.add_transportation)
         
         # add housing expenses button
-        self.housing_button = QtWidgets.QPushButton(self)
-        self.housing_button.setText('Housing')
-        self.housing_button.move(400, 160)
-        self.housing_button.clicked.connect(self.add_housing)
+        housing_button = QtWidgets.QPushButton(self)
+        housing_button.setText('Housing')
+        housing_button.clicked.connect(self.add_housing)
 
         # add unsecured debt button
-        self.debt_button = QtWidgets.QPushButton(self)
-        self.debt_button.setText('Unsecured debt')
-        self.debt_button.move(495, 160)
-        self.debt_button.clicked.connect(self.add_Unsecured_Debts)
+        debt_button = QtWidgets.QPushButton(self)
+        debt_button.setText('Unsecured debt')
+        debt_button.clicked.connect(self.add_Unsecured_Debts)
 
-        # Logout button
-        self.accept = QtWidgets.QPushButton(self)
-        self.accept.setText('Log out')
-        self.accept.move(100, 550)
-        self.accept.clicked.connect(self.mainWin)
+        # income label
+        income_label = QtWidgets.QLabel(self)
+        income_label.setFixedSize(QSize(200, 50))
+        income_label.setText(f'Monthly income: {Monthly_Income} ')
 
-        # cancel button
-        self.cancel = QtWidgets.QPushButton(self)
-        self.cancel.setText('Exit')
-        self.cancel.move(500, 550)
-        self.cancel.clicked.connect(self.close)
+        # asset label 
+        asset_label = QtWidgets.QLabel(self)
+        asset_label.setFixedSize(QSize(200, 50))
+        asset_label.setText(f'Total assets: {Total_assets}')
+
+        # transportation label 
+        transportation_label = QtWidgets.QLabel(self)
+        transportation_label.setFixedSize(QSize(200, 50))
+        transportation_label.setText(f'Monthly transportation expenses: {Monthly_transportation_expenses}')
+
+        # housing label 
+        housing_label = QtWidgets.QLabel(self)
+        housing_label.setFixedSize(QSize(200, 50))
+        housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
+
+        # debts label 
+        debts_label = QtWidgets.QLabel(self)
+        debts_label.setFixedSize(QSize(200, 50))
+        debts_label.setText(f'Total monthly debt obligations: {Monthly_Debt_expenses}')
+
+        # dependent label
+        dependent_label = QtWidgets.QLabel(self)
+        dependent_label.setFixedSize(QSize(200, 50))
+        dependent_label.setText(f'Dependents: {dependent_list}')
+         
+        
+        
+        
+        
+        Label_layout = QGridLayout()
+        Label_layout.addWidget(income_label, 0, 0)
+        Label_layout.addWidget(asset_label, 0, 1)
+        Label_layout.addWidget(transportation_label, 1, 0)
+        Label_layout.addWidget(housing_label, 1, 1)
+        Label_layout.addWidget(debts_label, 2, 0)
+        Label_layout.addWidget(dependent_label, 2, 1)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(assets_button)
+        button_layout.addWidget(dependents_button)
+        button_layout.addWidget(income_button)
+        button_layout.addWidget(transportation_button)
+        button_layout.addWidget(housing_button)
+        button_layout.addWidget(debt_button)
+
+        button_layout2 = QHBoxLayout()
+        button_layout2.addWidget(QPushButton('Log out', clicked = self.closing))
+        button_layout2.addWidget(QPushButton('Exit', clicked = closing))
+        
+        LabelBUtton_layout = QVBoxLayout()
+        LabelBUtton_layout.addLayout(Label_layout)
+        LabelBUtton_layout.addLayout(button_layout)
+        LabelBUtton_layout.addLayout(button_layout2)
+        
+        
+        Graph_layout = QVBoxLayout()
+        
+        #Creating the layout manager
+        layout_manager = QHBoxLayout()
+        layout_manager.addLayout(LabelBUtton_layout, 50)
+        layout_manager.addLayout(Graph_layout, 50)
+        self.setLayout(layout_manager)
+
         self.show()
     
     # returns tu main window    
-    def mainWin(self):
-        self.Main_Window = App_Window()
-        self.Main_Window.show()
+    def closing(self):
         self.close()
+        global Interactive_layout
+        Interactive_layout.addWidget(Menu_Window())
 
     # calling add income window    
     def add_income_window(self):
         """creates an object type add_income"""
         self.close()
-        self.income_window = add_income()
-        self.income_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(add_income())
 
     # calling add housing window    
     def add_housing(self):
         """creates an object type add_housing"""
         self.close()
-        self.housing_window = add_housing()
-        self.housing_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(add_housing())
 
     # calling add transportation window    
     def add_transportation(self):
         """creates an object type add_transportation"""
         self.close()
-        self.transportation_window = add_transportation()
-        self.transportation_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(add_transportation())
 
     # calling add dependents window    
     def add_dependents(self):
         """creates an object type add_dependents"""
         self.close()
-        self.dependents_window = add_dependents()
-        self.dependents_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(add_dependents())
 
     # calling add assets window    
     def add_Assets(self):
         """creates an object type add_Assets"""
         self.close()
-        self.Assets_window = add_Assets()
-        self.Assets_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(add_Assets())
 
     # calling add Unsecured debt window    
     def add_Unsecured_Debts(self):
         """creates an object type add_Unsecured_Debts"""
         self.close()
-        self.Unsecured_Debts_window = add_Unsecured_Debts()
-        self.Unsecured_Debts_window.show()  
+        global Interactive_layout 
+        Interactive_layout.addWidget(add_Unsecured_Debts()) 
     
 #//////////////////SUBWINDOWs OF ADD FINANCE//////////////////////
 #-------------------------Income window--------------------------
@@ -474,7 +494,6 @@ class add_income(QtWidgets.QWidget):
         self.accept.move(40, 160)
         self.accept.clicked.connect(self.updatingIncome)
 
-
         # cancel button
         self.cancel = QtWidgets.QPushButton(self)
         self.cancel.setText('Exit')
@@ -496,11 +515,6 @@ class add_income(QtWidgets.QWidget):
         
         if Monthly_Income != total:
             Monthly_Income = total
-           
-        self.close()
-        info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
 
         with open('Income_Dbase', 'a+') as DB:
             DB.seek(0)
@@ -515,10 +529,13 @@ class add_income(QtWidgets.QWidget):
                 DB.write(line)
             DB.close()    
         self.close()
+
+        #Updating global variables and returning to addFinances
         info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
-    
+        self.close()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
+
     # This function load/creates income info 
     def input_loader(self):
         """This function loads current input"""     
@@ -542,8 +559,8 @@ class add_income(QtWidgets.QWidget):
     # creates an object type addFinances
     def addFinance(self):
         self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
 
 #-------------------------housing window--------------------------
 class add_housing(QtWidgets.QWidget):
@@ -676,11 +693,7 @@ class add_housing(QtWidgets.QWidget):
         if Monthly_housing_expenses != total:
             Monthly_housing_expenses = total
 
-        self.close()
-        info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
-
+        #saving the information
         with open('Housing_Dbase', 'a+') as DB:
             DB.seek(0)
             whole_text = DB.readlines()
@@ -694,12 +707,14 @@ class add_housing(QtWidgets.QWidget):
                     DB.write(f"{decode_string(str(self.HOA_line.text()))} {decode_string(str(self.gas_line.text()))} \n")   
                     continue
                 DB.write(line)
-            DB.close()    
+            DB.close() 
+
+        #closing the window   
         self.close()
         info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
-    
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
+
     # This function load/creates housing info 
     def input_loader(self):
         """This function loads current input"""     
@@ -723,8 +738,8 @@ class add_housing(QtWidgets.QWidget):
      # creates an object type addFinances to closes current window without changes
     def addFinance(self):
         self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
 
 #-------------------------transportation window--------------------------
 class add_transportation(QtWidgets.QWidget):
@@ -835,11 +850,6 @@ class add_transportation(QtWidgets.QWidget):
         if total != Monthly_transportation_expenses:
             Monthly_transportation_expenses = total
 
-        self.close()
-        info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
-
         with open('Transportation_Dbase', 'a+') as DB:
             DB.seek(0)
             whole_text = DB.readlines()
@@ -852,10 +862,11 @@ class add_transportation(QtWidgets.QWidget):
                     continue
                 DB.write(line)
             DB.close()    
+        
         self.close()
         info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
     
     # This function load/creates transportation info 
     def input_loader(self):
@@ -880,8 +891,8 @@ class add_transportation(QtWidgets.QWidget):
      # creates an object type addFinances to closes current window without changes
     def addFinance(self):
         self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
 
 #-------------------------dependents window--------------------------
 class add_dependents(QtWidgets.QWidget):
@@ -935,9 +946,9 @@ class add_dependents(QtWidgets.QWidget):
             dependent_list = ['none']
         elif self.dependents_line.text() == '':
             self.close()
-            self.return_window = Financial_box()
-            self.return_window.show()
-            
+            global Interactive_layout
+            Interactive_layout.addWidget(Financial_box())
+            return
         else:        
             try:
                 text = self.dependents_line.text().replace(',', ' ')
@@ -954,17 +965,18 @@ class add_dependents(QtWidgets.QWidget):
         global Monthly_Income 
         Monthly_Income = income(float(decode_string(self.income_loader()[1])), float(decode_string(self.income_loader()[2])))
 
+        # Returning to addFinances and updating global variables
         self.income_loader()
         self.close()
         info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
+        
+        Interactive_layout.addWidget(Financial_box())
 
-     # creates an object type addFinances to closes current window without changes
+     # Return addFinances to closes current window without changes
     def addFinance(self):
         self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
+        global Interactive_layout
+        Interactive_layout.addWidget(Financial_box())
 
     # This function load/creates income info. CATION!!! manipulation of Income_Dbase
     def income_loader(self):
@@ -1088,12 +1100,8 @@ class add_Assets(QtWidgets.QWidget):
         
         if  Total_assets != total:
             Total_assets = total
-
-        self.close()
-        info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
-
+        
+        #saving the inputs
         with open('Assets_Dbase', 'a+') as DB:
             DB.seek(0)
             whole_text = DB.readlines()
@@ -1107,10 +1115,12 @@ class add_Assets(QtWidgets.QWidget):
                     continue
                 DB.write(line)
             DB.close()    
+        
+        # closing window and returning, updating global variables to add Finances
         self.close()
         info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
+        global Interactive_layout
+        Interactive_layout.addWidget(Financial_box())
     
     # This function load/creates assets info 
     def input_loader(self):
@@ -1132,11 +1142,11 @@ class add_Assets(QtWidgets.QWidget):
             DB.close()
             self.input_loader()
 
-     # creates an object type addFinances to closes current window without changes
+     # Open addFinances and closes current window without changes
     def addFinance(self):
         self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
+        global Interactive_layout
+        Interactive_layout.addWidget(Financial_box())
     
     #-------------------------Debt window--------------------------
 class add_Unsecured_Debts(QtWidgets.QWidget):
@@ -1478,6 +1488,7 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
         if Monthly_Debt_expenses != total:
             Monthly_Debt_expenses = total
         
+        # Saving the inputs
         with open('Debts_Dbase', 'a+') as DB:
             DB.seek(0)
             whole_text = DB.readlines()
@@ -1503,9 +1514,12 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
                 DB.write(line)
             DB.close()    
         self.close()
+        
+        #closing the window and updating global variables
+        self.close()
         info_Saver(Username, Password)
-        self.return_window = Financial_box()
-        self.return_window.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
     
     # This function load/creates debts info 
     def input_loader(self):
@@ -1527,11 +1541,11 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
             DB.close()
             self.input_loader()
 
-     # creates an object type addFinances to closes current window without changes
+     # Open addFinances to closes current window without changes
     def addFinance(self):
         self.close()
-        self.Finances = Financial_box()
-        self.Finances.show()
+        global Interactive_layout 
+        Interactive_layout.addWidget(Financial_box())
 
 #********************CREATING THE APP*********************************           
 def AppBox():
@@ -1714,19 +1728,19 @@ def info_Loader(userName, password, logged = False):
     Password = decode_string(info[1])
 
     global Monthly_Income
-    Monthly_Income = float(decode_string(info[2]))
+    Monthly_Income = round(float(decode_string(info[2])), 2)
 
     global Total_assets
-    Total_assets = float(decode_string(info[3]))
+    Total_assets = round(float(decode_string(info[3])), 2)
 
     global Monthly_housing_expenses
-    Monthly_housing_expenses = float(decode_string(info[5]))
+    Monthly_housing_expenses = round(float(decode_string(info[5])), 2)
 
     global Monthly_transportation_expenses 
-    Monthly_transportation_expenses = float(decode_string(info[4]))
+    Monthly_transportation_expenses = round(float(decode_string(info[4])), 2)
 
     global Monthly_Debt_expenses
-    Monthly_Debt_expenses = float(decode_string(info[6]))
+    Monthly_Debt_expenses = round(float(decode_string(info[6])), 2)
 
     global User_Id
     User_Id =  int(decode_string(info[7]))
