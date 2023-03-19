@@ -815,8 +815,6 @@ class Financial_box(QtWidgets.QWidget):
     def Call_NewIncomeGraph(self):
         """Orders a graph comparing current income vs expected income"""
         
-        
-        
         try:
             global amount
             amount = income(float(self.rate.text().strip()), float(self.hours.text().strip()))
@@ -827,7 +825,12 @@ class Financial_box(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(self, 'Try Again','If your projected income is zero, then you are\n' 
                                            'actually losing your job.\n Press BACK if that is the case ')
             return
-        
+        if amount - Monthly_Income < 25 and amount - Monthly_Income > -25:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'The new job would not change your financial situation dramatically\n' 
+                                           'just Press BACK')
+            return
+
+
         self.close()
         global Window
         Interactive_layout.removeWidget(Window)
@@ -966,8 +969,7 @@ class Financial_box(QtWidgets.QWidget):
             if housing_array[7] != 0:
                 text += "  Monthly Extimated Gas Bill: " + str(housing_array[7]) + '\n'
             text += '\n'
-
-        
+      
         text += "Transpotation Expenses:\n" 
         if transportation_array != None:
             if transportation_array[1] != 0:
@@ -1119,7 +1121,7 @@ class add_Graph(QtWidgets.QWidget):
                     text += "Although you would have extra money do not forget to save some.\n"
                 else:
                     text += "Although your situation would look better it would not be enough to afford your current live style.\n"
-            elif months1[6] - months[6] < 50:
+            elif months1[6] - months[6] < 50 and months1[6] - months[6] > 0:
                 text += "Your financial situation would be about the same if you switch jobs.\n"
                 text += "However money should not be the main or only reason for your decision.\n"
             else:
@@ -1130,13 +1132,12 @@ class add_Graph(QtWidgets.QWidget):
             text += f"Your total assets is {Total_assets}.\n"
             how_long = 0
             if Liabilities > 0:
-                int(Total_assets/Liabilities)
-            if Total_assets - months1[6] != 0:
+                how_long = int(Total_assets/Liabilities)
+            if Total_assets - months1[6] <= 0:
                 text += "You have enough assets to afford this period. You can take a break if you want to.\n"
             
-            elif how_long > 0:
-                if how_long != 0:   
-                    text += f"You have enough assets to afford {how_long}. Think about your situaation carefuly.\n"
+            elif how_long > 0:  
+                    text += f"You have enough assets to afford {how_long} months. Think about your situaation carefuly.\n"
             else:
                 text += "You do not have enough assets to afford a month. " 
                 text += "You should start looking for another job asap.\n"
