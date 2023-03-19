@@ -394,16 +394,15 @@ class Financial_box(QtWidgets.QWidget):
 
         button_layout2 = QHBoxLayout()
         button_layout2.addWidget(QPushButton('Nothing Changes' , clicked = self.Nothing_changes))
-        button_layout2.addWidget(QPushButton('Get a Better Home', clicked = self.closing))
-        button_layout2.addWidget(QPushButton('Get a Better Car', clicked = self.closing))
-        button_layout2.addWidget(QPushButton('Receive More Assets', clicked = self.closing))
-        button_layout2.addWidget(QPushButton('Payoff Debts', clicked = self.closing))
+        button_layout2.addWidget(QPushButton('Buying House', clicked = self.Buying_House))
+        button_layout2.addWidget(QPushButton('Receive More Assets', clicked = self.MoreAssets_Event))
+        button_layout2.addWidget(QPushButton('Payoff Debts', clicked = self.PayingOff_Debts))
 
         button_layout3 = QHBoxLayout()
         button_layout3.addWidget(QPushButton('Switch Jobs' , clicked = self.New_Income))
         button_layout3.addWidget(QPushButton('Lose Job', clicked = self.Losing_Job))
-        button_layout3.addWidget(QPushButton('Downgrade Car', clicked = self.closing))
-        button_layout3.addWidget(QPushButton('Get More Debts', clicked = self.closing))
+        button_layout3.addWidget(QPushButton('Buying Car', clicked = self.Buying_Car))
+        button_layout3.addWidget(QPushButton('Get More Debts', clicked = self.Getting_Debts))
         button_layout3.addWidget(QPushButton('Unexpected Negative Balance', clicked = self.Unexpected_Event))
         
         # Hypotetical label
@@ -431,6 +430,208 @@ class Financial_box(QtWidgets.QWidget):
         self.setLayout(self.layout_manager)
         
         self.show()
+
+    
+    
+    #defining buying car
+    def Buying_Car(self):
+        """Creates a dialog window for buying car"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Buying Car'
+
+        self.Balance = QtWidgets.QLineEdit(self)
+        self.Balance.setText('0.0')
+        self.APR = QtWidgets.QLineEdit(self)
+        self.APR.setText('0.0')
+        self.LoanTerm = QtWidgets.QLineEdit(self)
+        self.LoanTerm.setText('0.0')
+        
+        global Layout
+        Layout = QGridLayout()
+        Layout.addWidget(QLabel('Enter The portion of the car loan that you are financing, the APR and loan term'), 0, 0)
+        Layout.addWidget(QLabel('Balance'), 1, 0)
+        Layout.addWidget(self.Balance, 1, 1)
+        Layout.addWidget(QLabel('Rate'), 2, 0)
+        Layout.addWidget(self.APR, 2, 1)
+        Layout.addWidget(QLabel('Car Loan Term'), 3, 0)
+        Layout.addWidget(self.LoanTerm,3 ,1)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_MoreDebtGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)
+    
+    #defining paying off debts
+    def PayingOff_Debts(self):
+        """Creates a dialog window for paying off debts"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Pay off Debt'
+
+        self.Balance = QtWidgets.QLineEdit(self)
+        self.Balance.setText('0.0')
+        self.APR = QtWidgets.QLineEdit(self)
+        self.APR.setText('0.0')
+        self.LoanTerm = QtWidgets.QLineEdit(self)
+        self.LoanTerm.setText('0.0')
+        
+        global Layout
+        Layout = QGridLayout()
+        Layout.addWidget(QLabel('Enter The Amount that you are planing to pay off, the APR and loan term'), 0, 0)
+        Layout.addWidget(QLabel('Balance'), 1, 0)
+        Layout.addWidget(self.Balance, 1, 1)
+        Layout.addWidget(QLabel('Rate'), 2, 0)
+        Layout.addWidget(self.APR, 2, 1)
+        Layout.addWidget(QLabel('Loan Term'), 3, 0)
+        Layout.addWidget(self.LoanTerm,3 ,1)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_MoreDebtGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)  
+
+    def Unexpected_Event(self):
+        """Creates a dialog window for Unexpected event"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Unexpected'
+
+        self.rate = QtWidgets.QLineEdit(self)
+        self.rate.setText('0.0')
+        
+        global Layout
+        Layout = QVBoxLayout()
+        Layout.addWidget(QLabel('Enter the cost of the financial unexpected event'))
+        Layout.addWidget(self.rate)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_UnexpectedEventGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window) 
+
+    #defining buying house
+    def Buying_House(self):
+        """Creates a dialog window for buying house"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Buying House'
+
+        self.Balance = QtWidgets.QLineEdit(self)
+        self.Balance.setText('0.0')
+        self.HouseValue = QtWidgets.QLineEdit(self)
+        self.HouseValue.setText('0.0')
+        self.APR = QtWidgets.QLineEdit(self)
+        self.APR.setText('0.0')
+        self.LoanTerm = QtWidgets.QLineEdit(self)
+        self.LoanTerm.setText('0.0')
+
+        global Layout
+        Layout = QGridLayout()
+        Layout.addWidget(QLabel('Enter the portion of the cost that you are planing to finance,\n the value of the house, the APR and mortgage term'), 0, 0)
+        Layout.addWidget(QLabel('Balance'), 1, 0)
+        Layout.addWidget(self.Balance, 1, 1)
+        Layout.addWidget(QLabel('Home Value'), 2, 0)
+        Layout.addWidget(self.HouseValue, 2, 1)
+        Layout.addWidget(QLabel('APR'), 3, 0)
+        Layout.addWidget(self.APR, 3, 1)
+        Layout.addWidget(QLabel('Mortgage Term'), 4, 0)
+        Layout.addWidget(self.LoanTerm,4 ,1)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_MoreDebtGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window) 
+
+    #defining unexpected event
+    def Unexpected_Event(self):
+        """Creates a dialog window for Unexpected event"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Unexpected'
+
+        self.rate = QtWidgets.QLineEdit(self)
+        self.rate.setText('0.0')
+        
+        global Layout
+        Layout = QVBoxLayout()
+        Layout.addWidget(QLabel('Enter the cost of the financial unexpected event'))
+        Layout.addWidget(self.rate)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_UnexpectedEventGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)    
+    #defining more debts
+    def Getting_Debts(self):
+        """Creates a dialog window for more debts"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'More Debt'
+
+        self.Balance = QtWidgets.QLineEdit(self)
+        self.Balance.setText('0.0')
+        self.APR = QtWidgets.QLineEdit(self)
+        self.APR.setText('0.0')
+        self.LoanTerm = QtWidgets.QLineEdit(self)
+        self.LoanTerm.setText('0.0')
+
+        global Layout
+        Layout = QGridLayout()
+        Layout.addWidget(QLabel('Enter The Amount that you are planing to borrow, the APR and the loan term'), 0, 0)
+        Layout.addWidget(QLabel('Balance'), 1, 0)
+        Layout.addWidget(self.Balance, 1, 1)
+        Layout.addWidget(QLabel('Rate'), 2, 0)
+        Layout.addWidget(self.APR, 2, 1)
+        Layout.addWidget(QLabel('Loan Term'), 3, 0)
+        Layout.addWidget(self.LoanTerm,3 ,1)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_MoreDebtGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)    
     #defining unexpected event
     def Unexpected_Event(self):
         """Creates a dialog window for Unexpected event"""
@@ -458,8 +659,32 @@ class Financial_box(QtWidgets.QWidget):
 
         Interactive_layout.addWidget(Window)
 
-    
+    #defining unexpected event
+    def MoreAssets_Event(self):
+        """Creates a dialog window for More Assets"""
 
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'MoreAssets'
+
+        self.rate = QtWidgets.QLineEdit(self)
+        self.rate.setText('0.0')
+        
+        global Layout
+        Layout = QVBoxLayout()
+        Layout.addWidget(QLabel('Enter the capital that you are receiving'))
+        Layout.addWidget(self.rate)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_UnexpectedEventGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)
 
     # defining Nothing changes
     def Nothing_changes(self):
@@ -474,7 +699,6 @@ class Financial_box(QtWidgets.QWidget):
         #Brings the graph to the front
         Interactive_layout.addWidget(add_Graph())
     
-
     # defining New Income
     def  New_Income(self):
         """Orders a graph comparing current and expected income"""
@@ -487,11 +711,14 @@ class Financial_box(QtWidgets.QWidget):
         actual_info = self.input_loader('Income_DBase')
         #editline to get the rate
         self.rate = QtWidgets.QLineEdit(self)
-        self.rate.setText(f'{actual_info[1]}')
-
         self.hours = QtWidgets.QLineEdit(self)
-        self.hours.setText(f'{actual_info[2]}')
-
+        if len(actual_info) != None:
+            self.hours.setText(f'{actual_info[2]}')
+            self.rate.setText(f'{actual_info[1]}')
+        else:
+            self.hours.setText(f'0.0')
+            self.rate.setText(f'0.0')
+            
         self.close()
 
         global Layout
@@ -525,8 +752,52 @@ class Financial_box(QtWidgets.QWidget):
         #Brings the graph to the front
         Interactive_layout.addWidget(add_Graph())
 
+    def Call_MoreDebtGraph(self):
+        """Orders a graph comparing current income vs more debt"""
+        
+        house = False
+
+        car = False
+
+        homeValue = 0
+
+        global amount
+        if float(self.Balance.text().strip()) <= 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If your balance is zero then press the BACK button')    
+            return
+        
+        if Func_Type == 'Buying House':
+            house = True
+            homeValue = float(self.HouseValue.text().strip())
+
+        elif Func_Type == 'Buying Car':
+            car = True
+            
+                
+        if float(self.Balance.text().strip()) > 0 and float(self.LoanTerm.text().strip()) == 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If Balance is different from zero term cannot be zero')
+            return    
+        
+        try:
+            amount = mortgage(float(self.Balance.text().strip()), float(self.APR.text().strip()),
+                               float(self.LoanTerm.text().strip())/12,home_value= homeValue
+                                 ,is_morgatge=house, is_carLoan=car)
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+        self.close()
+        global Window
+        Interactive_layout.removeWidget(Window)
+        del Window
+        Interactive_layout.addWidget(add_Graph())
+
     def Call_UnexpectedEventGraph(self):
         """Orders a graph comparing current income vs expected income"""
+        
+        if float(self.rate.text().strip()) <= 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'If your balance is zero then press the BACK button')    
+            return
+        
         try:
             global amount
             amount = float(self.rate.text().strip())
@@ -543,12 +814,20 @@ class Financial_box(QtWidgets.QWidget):
 
     def Call_NewIncomeGraph(self):
         """Orders a graph comparing current income vs expected income"""
+        
+        
+        
         try:
             global amount
             amount = income(float(self.rate.text().strip()), float(self.hours.text().strip()))
         except:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
             return
+        if amount == 0:
+            QtWidgets.QMessageBox.critical(self, 'Try Again','If your projected income is zero, then you are\n' 
+                                           'actually losing your job.\n Press BACK if that is the case ')
+            return
+        
         self.close()
         global Window
         Interactive_layout.removeWidget(Window)
@@ -638,78 +917,86 @@ class Financial_box(QtWidgets.QWidget):
 
         #number of childs
         children = 0
-        for child in dependent_list:
-            if int(child) < 18:
-                children  += 1
+        children_total = 0
+        if dependent_list[0] != 'none':
+            for child in dependent_list:
+                if int(child) < 18:
+                    children  += 1
 
-        #calculating monthly child expenses
-        children_total = children * round(((income_array[1] * income_array[2] * 52)/ 107400) * 12980 / 12, 2)    
+            #calculating monthly child expenses
+            children_total = children * round(((income_array[1] * income_array[2] * 52)/ 107400) * 12980 / 12, 2)    
         
         #Adding only relevant information  (variable or result != 0)
         text = "Income:\n"
-        if income_array[1] != 0 and income_array[2]:
-            text += " Monthly Gross Income: " + str(round((income_array[1] * income_array[2] * 52)/12, 2)) + '\n'
+        if income_array != None:
+            if income_array[1] != 0 and income_array[2] != 0:
+                text += " Monthly Gross Income: " + str(round((income_array[1] * income_array[2] * 52)/12, 2)) + '\n'
         if children_total != 0:
             text += " Extimated Cost of Rising Your Children per Month: " + str(children_total) + '\n'
         text += '\n'
 
         text += "Assets Expenses:\n"
-        if assets_array[1] != 0:
-            text += "  Money on Checking Accounts: " + str(assets_array[1]) + '\n'
-        if assets_array[2] != 0:
-            text += "  Money on Saving Accounts: " + str(assets_array[2]) + '\n'
-        if assets_array[3] != 0:
-            text += "  Money Invested in Bonds: "  +  str(assets_array[3]) + '\n'      
-        if assets_array[4] != 0:
-            text += "  Money Invested in Stocks: "  +  str(assets_array[4]) + '\n'
-        if assets_array[1] != 0:
-            text += "  Cash: "  +  str(assets_array[5]) + '\n'
-        text += '\n'
+        if assets_array != None:
+            if assets_array[1] != 0:
+                text += "  Money on Checking Accounts: " + str(assets_array[1]) + '\n'
+            if assets_array[2] != 0:
+                text += "  Money on Saving Accounts: " + str(assets_array[2]) + '\n'
+            if assets_array[3] != 0:
+                text += "  Money Invested in Bonds: "  +  str(assets_array[3]) + '\n'      
+            if assets_array[4] != 0:
+                text += "  Money Invested in Stocks: "  +  str(assets_array[4]) + '\n'
+            if assets_array[1] != 0:
+                text += "  Cash: "  +  str(assets_array[5]) + '\n'
+            text += '\n'
 
         text += "Housing Expenses:\n"
-        if housing_array[1] != 0:
-            text += "  Monthly House Payment: " + str(housing_array[1]) + '\n'
-        if housing_array[2] != 0:
-            text += "  Monthly Extimated Property insurance: " + str(housing_array[2]) + '\n'
-        if housing_array[3] != 0:
-            text += "  Monthly Electric Bill: " + str(housing_array[3]) + '\n'
-        if housing_array[4] != 0:    
-            text += "  Monthly Internet Bill: " + str(housing_array[4]) + '\n'
-        if housing_array[5] != 0:
-            text += "  Monthly Extimated Property Taxes: " + str(housing_array[5]) + '\n'
-        if housing_array[6] != 0:
-            text += "  Monthly HOA Dues: " + str(housing_array[6]) + '\n'
-        if housing_array[7] != 0:
-            text += "  Monthly Extimated Gas Bill: " + str(housing_array[7]) + '\n'
-        text += '\n'
+        if housing_array != None:
+            if housing_array[1] != 0:
+                text += "  Monthly House Payment: " + str(housing_array[1]) + '\n'
+            if housing_array[2] != 0:
+                text += "  Monthly Extimated Property insurance: " + str(housing_array[2]) + '\n'
+            if housing_array[3] != 0:
+                text += "  Monthly Electric Bill: " + str(housing_array[3]) + '\n'
+            if housing_array[4] != 0:    
+                text += "  Monthly Internet Bill: " + str(housing_array[4]) + '\n'
+            if housing_array[5] != 0:
+                text += "  Monthly Extimated Property Taxes: " + str(housing_array[5]) + '\n'
+            if housing_array[6] != 0:
+                text += "  Monthly HOA Dues: " + str(housing_array[6]) + '\n'
+            if housing_array[7] != 0:
+                text += "  Monthly Extimated Gas Bill: " + str(housing_array[7]) + '\n'
+            text += '\n'
 
+        
         text += "Transpotation Expenses:\n" 
-        if transportation_array[1] != 0:
-            text += "  Monthly Car Payment: " + str(transportation_array[1]) + '\n'
-        if transportation_array[2] != 0:
-            text += "  Monthly car Insurance Payment: " + str(transportation_array[2]) + '\n'
-        if transportation_array[3] != 0:
-            text += "  Monthly Car Extimated Maintenance: " + str(round(transportation_array[3]* 0.09, 2)) + '\n'
-            text += "  Monthly Fuel Cost : " + str(round(transportation_array[3] * 0.0955, 2)) + '\n' 
-        text += '\n'   
+        if transportation_array != None:
+            if transportation_array[1] != 0:
+                text += "  Monthly Car Payment: " + str(transportation_array[1]) + '\n'
+            if transportation_array[2] != 0:
+                text += "  Monthly car Insurance Payment: " + str(transportation_array[2]) + '\n'
+            if transportation_array[3] != 0:
+                text += "  Monthly Car Extimated Maintenance: " + str(round(transportation_array[3]* 0.09, 2)) + '\n'
+                text += "  Monthly Fuel Cost : " + str(round(transportation_array[3] * 0.0955, 2)) + '\n' 
+            text += '\n'   
         
         text += "Monthly Unsecured Debt Obligations:\n"
-        if debts_array[21] != 0:
-            text += "  Credit Card1 Monthly Payment: " + str(debts_array[21]) + '\n'
-        if debts_array[22] != 0:
-            text += "  Credit Card2 Monthly Payment: " + str(debts_array[22]) + '\n'
-        if debts_array[23] != 0:
-            text += "  Credit Card3 Monthly Payment: " + str(debts_array[23]) + '\n'
-        if debts_array[24] != 0:
-            text += "  Credit Card4 Monthly Payment: " + str(debts_array[24]) + '\n'
-        if debts_array[25] != 0:
-            text += "  Loan1 Monthly Payment: " + str(debts_array[25]) + '\n'
-        if debts_array[26] != 0:
-            text += "  Loan2 Card1 Monthly Payment: " + str(debts_array[26]) + '\n'
-        if debts_array[27] != 0:
-            text += "  Loan3 Card1 Monthly Payment: " + str(debts_array[27]) + '\n'
-        if debts_array[28] != 0:
-            text += "  Loan4 Card1 Monthly Payment: " + str(debts_array[28]) + '\n'
+        if debts_array != None:
+            if debts_array[21] != 0:
+                text += "  Credit Card1 Monthly Payment: " + str(debts_array[21]) + '\n'
+            if debts_array[22] != 0:
+                text += "  Credit Card2 Monthly Payment: " + str(debts_array[22]) + '\n'
+            if debts_array[23] != 0:
+                text += "  Credit Card3 Monthly Payment: " + str(debts_array[23]) + '\n'
+            if debts_array[24] != 0:
+                text += "  Credit Card4 Monthly Payment: " + str(debts_array[24]) + '\n'
+            if debts_array[25] != 0:
+                text += "  Loan1 Monthly Payment: " + str(debts_array[25]) + '\n'
+            if debts_array[26] != 0:
+                text += "  Loan2 Card1 Monthly Payment: " + str(debts_array[26]) + '\n'
+            if debts_array[27] != 0:
+                text += "  Loan3 Card1 Monthly Payment: " + str(debts_array[27]) + '\n'
+            if debts_array[28] != 0:
+                text += "  Loan4 Card1 Monthly Payment: " + str(debts_array[28]) + '\n'
     
         QtWidgets.QMessageBox.information(self, 'Detailed Information', text)
     
@@ -766,16 +1053,61 @@ class add_Graph(QtWidgets.QWidget):
             d['If you switch jobs'] = months1
 
         elif Func_Type == 'Lose Job':
-
+        
             months1 = []
             for i in range(7):
                 months1.append(Liabilities*i*(-1))
   
             d['Lose jobs'] = months1
 
+        elif Func_Type == 'More Debt':
+            Liabilities += amount
+            Residual_income = Monthly_Income - Liabilities
+
+            months1 = []
+            for i in range(7):
+                months1.append(Residual_income*i)
+  
+            d['More Debt'] = months1
+        
+        elif Func_Type == 'Pay off Debt':
+            Liabilities -= amount
+
+            Residual_income = Monthly_Income - Liabilities
+
+            months1 = []
+            for i in range(7):
+                months1.append(Residual_income*i)
+  
+            d['Paying off Debt'] = months1
+
+        elif Func_Type == 'Buying House':
+            Liabilities += amount - Monthly_housing_expenses
+
+            Residual_income = Monthly_Income - Liabilities
+
+            months1 = []
+            for i in range(7):
+                months1.append(Residual_income*i)
+  
+            d['New house as your primary residence'] = months1
+
+        elif Func_Type == 'Buying Car':
+            Liabilities += amount - Monthly_transportation_expenses
+
+            Residual_income = Monthly_Income - Liabilities
+
+            months1 = []
+            for i in range(7):
+                months1.append(Residual_income*i)
+  
+            d['Remplacing Your Car'] = months1
+
+
         # creating the informational layout
         layout_info = QVBoxLayout()
 
+        #if-elif-else text generator
         text = f'Your projected accumulated capital if your situation does not change  is {round(months[6], 2)}.\n'
         if Func_Type == 'Different Income':
             text += f'If you switch jobs your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
@@ -796,14 +1128,15 @@ class add_Graph(QtWidgets.QWidget):
         elif Func_Type == 'Lose Job':
             text += f'If you lose your job your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
             text += f"Your total assets is {Total_assets}.\n"
-            
-            how_long = int(Total_assets/Liabilities)
-            if Total_assets > months1[6]:
+            how_long = 0
+            if Liabilities > 0:
+                int(Total_assets/Liabilities)
+            if Total_assets - months1[6] != 0:
                 text += "You have enough assets to afford this period. You can take a break if you want to.\n"
             
             elif how_long > 0:
-                text += f"You have enough assets to afford {how_long}. Think about your situaation carefuly.\n"
-
+                if how_long != 0:   
+                    text += f"You have enough assets to afford {how_long}. Think about your situaation carefuly.\n"
             else:
                 text += "You do not have enough assets to afford a month. " 
                 text += "You should start looking for another job asap.\n"
@@ -822,14 +1155,85 @@ class add_Graph(QtWidgets.QWidget):
                 text += f"You still need {amount - Total_assets}.\n If this is not an "
                 text += f" emergency you may want to avoid this event.\n"
                 text += f"otherwise you need to borrow the difference\n" 
-
-
-                     
-
-                    
-
-                
-
+        elif Func_Type == 'MoreAssets':
+            text += f"You are receiving {amount}. This are great News!!!"
+            if months[6] < 0:
+                text += f"However do not forget that your proyected accumulated capital \n"
+                text += f"for the next six months is negative."
+                if amount > abs(months[6]) :
+                    text += f"You can cover this deficit with this amount without changing \n "
+                    text += f"The current state of your assets and debts.\n"
+                    if  amount - abs(months[6]) > 50:
+                        text += f" and you still would have {round(amount - abs(months[6]), 2)}.\n"
+                    else:
+                        text += "and you get to keep the change.\n "
+                else:
+                    text += f"You can cover {int(amount/Liabilities)} months.\n"
+            elif months[6] >= 0 and Monthly_Debt_expenses > 0:
+                text += "You should use this amount to pay some debts.\n"
+            elif months[6] >= 0 and Total_assets < 500:
+                text += "Since your current assets are low you should save this amount.\n"
+            else:
+                text += "Your financial situation is in a good shape just do not forget to save some.\n"
+        elif Func_Type == 'More Debt':
+            text += f'Your projected accumulated capital if you get this loan is {round(months1[6], 2)}.\n'
+            if Total_assets > 0:
+                f"You should consider using your assets if you can before getting this loan.\n"
+            if months[6]  < 0:
+                text +=  "Getting this loan would make worse your already bad financial situation. "
+                if Monthly_Debt_expenses > 0:
+                    text += "You should pay other debts if possible.\n"
+                else:
+                    "\n"
+                text += "Using the money to cover your monthly deficit is the best idea.\n"
+            elif months[6] > 0 and months1[6] < 0:
+                text += "This loan will nearly or actually create a monthly deficit that you wiould not have otherwise.\n"
+        elif Func_Type == 'Pay off Debt':
+            text += f'Your projected accumulated capital if you paritally or totally pay off your debts is {round(months1[6], 2)}.\n'
+            if amount > Monthly_Debt_expenses:
+                text += "Remember that you cannot pay more than what you owe so the rest goes towar your assets.\n"
+            text += f'Paying of your debts is good for your financial health.\n'
+            if int(Monthly_Debt_expenses) >= int(amount):
+                text += f'In this case you would be debt free.\n'
+            else:
+                text += f"Although you still have to pay {round(Monthly_Debt_expenses - amount, 2)} every month \n"
+                text += "your financial situation would improve.\n"
+            if Total_assets < 300:
+                text += f"One last consideration is that your assets are low, you may want to put some money toward your assets \n "    
+                text += "in case you need it in the future even though this means paying less debts.\n"
+        elif Func_Type == 'Buying House':
+            text += f'If you buy a new house your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f"Your new monthly housing expenses would be {round(amount, 2)}.\n"
+            if  amount - Monthly_housing_expenses  > 50:
+                text += "This is more than your current monthly housing expenses.\n"
+                if months[6] < 0:
+                    text += "This will make worse your already bad financial situation.\n"
+                elif months[6] > 0 and  months1[6] < 0:
+                    text += "This will create a negative projected balance\n"
+                else:
+                    text += "You still can afford this change.\n"                             
+            elif amount - Monthly_housing_expenses  < 50 or amount - Monthly_housing_expenses  > -50:
+                 text += "This is about your current monthly housing expenses.\n"
+            else:  
+                text += "This is less than your current monthly housing expenses and\n"
+                text += "definitively a great decision. However money should not be the only factor to consider.\n"
+            
+        elif Func_Type == 'Buying Car':
+            text += f'If you change your car your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f"Your new monthly transportation expenses would be {round(amount, 2)}.\n"
+            if  amount - Monthly_transportation_expenses  > 50:
+                text += "This is more than your current monthly transportation expenses.\n"
+                if months[6] < 0:
+                    text += "This will make worse your already bad financial situation.\n"
+                elif months[6] > 0 and  months1[6] < 0:
+                    text += "This will create a negative projected balance\n"
+                else:
+                    text += "You still can afford this change.\n"                             
+            elif amount - Monthly_transportation_expenses  < 50 or amount - Monthly_transportation_expenses  > -50:
+                 text += "This is about your current monthly transportation expenses.\n"
+            else:  
+                text += "This is less than your current monthly transportation expenses and\n"
+                text += "definitively a great decision. However money should not be the only factor to consider.\n"
         
         if Func_Type != 'Default':
             layout_info.addWidget(QLabel(text))
@@ -843,11 +1247,9 @@ class add_Graph(QtWidgets.QWidget):
         layout_manager = QVBoxLayout()
         layout_manager.addWidget(default_graph)
         layout_manager.addLayout(layout_info)
-        self.setLayout(layout_manager)
-        
+        self.setLayout(layout_manager)     
             
         self.show()   
-    
     
     def Closing(self):
         global Func_Type
@@ -1376,7 +1778,9 @@ class add_dependents(QtWidgets.QWidget):
         
         #updating the income with the new dependents list
         global Monthly_Income 
-        Monthly_Income = income(float(decode_string(self.income_loader()[1])), float(decode_string(self.income_loader()[2])))
+        Monthly_Income = 0
+        if self.income_loader != None:
+            Monthly_Income = income(float(decode_string(self.income_loader()[1])), float(decode_string(self.income_loader()[2])))
 
         # Returning to addFinances and updating global variables
         self.income_loader()
@@ -2106,7 +2510,7 @@ def mortgage( loan_amount, anual_interest_rate, years,home_value = 0, is_morgatg
         Insurance = 1682
         
         # adding maintenance and insurance
-        Monthly += (Maintenance + 1682)/12 
+        Monthly += (Maintenance + Insurance)/12 
     
     # returns the monthly payment
     return round(Monthly,2)
