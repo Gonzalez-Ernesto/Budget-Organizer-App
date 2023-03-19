@@ -1,6 +1,6 @@
 #*******************************GRAPHIC USER INTERFACE*******************
-import sys , random, matplotlib.pyplot as ptl
-from matplotlib.backends.backend_agg import FigureCanvasAgg as Canvas
+import sys , random, matplotlib.pyplot as ptl , numpy as np, pandas as pd
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 from PyQt5 import QtWidgets
@@ -49,7 +49,7 @@ class Menu_Window(QtWidgets.QWidget):
 
     def login(self):
         self.close()
-        global Interactive_layout 
+        global Interactive_layout
         Interactive_layout.addWidget(Login_box())
 
 def closing():
@@ -299,6 +299,15 @@ class Financial_box(QtWidgets.QWidget):
 
         info_Loader(Username, Password)
 
+        #variables for Graphs communication
+        global amount
+        amount  = Monthly_Income
+
+        global Func_Type
+        Func_Type = 'Default'
+
+        self.Pressed = False
+
         # add assets button
         assets_button = QtWidgets.QPushButton(self)
         assets_button.setText('Assets')
@@ -331,32 +340,38 @@ class Financial_box(QtWidgets.QWidget):
 
         # income label
         income_label = QtWidgets.QLabel(self)
-        income_label.setFixedSize(QSize(200, 50))
+        income_label.setFixedSize(QSize(280, 50))
+        income_label.setFont(QtGui.QFont('Arial', 12))
         income_label.setText(f'Monthly income: {Monthly_Income} ')
 
         # asset label 
         asset_label = QtWidgets.QLabel(self)
-        asset_label.setFixedSize(QSize(200, 50))
+        asset_label.setFixedSize(QSize(280, 50))
+        asset_label.setFont(QtGui.QFont('Arial', 12))
         asset_label.setText(f'Total assets: {Total_assets}')
 
         # transportation label 
         transportation_label = QtWidgets.QLabel(self)
-        transportation_label.setFixedSize(QSize(200, 50))
+        transportation_label.setFixedSize(QSize(280, 50))
+        transportation_label.setFont(QtGui.QFont('Arial', 12))
         transportation_label.setText(f'Monthly transportation expenses: {Monthly_transportation_expenses}')
 
         # housing label 
         housing_label = QtWidgets.QLabel(self)
-        housing_label.setFixedSize(QSize(200, 50))
+        housing_label.setFixedSize(QSize(280, 50))
+        housing_label.setFont(QtGui.QFont('Arial', 12))
         housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
 
         # debts label 
         debts_label = QtWidgets.QLabel(self)
-        debts_label.setFixedSize(QSize(200, 50))
+        debts_label.setFixedSize(QSize(280, 50))
+        debts_label.setFont(QtGui.QFont('Arial', 12))
         debts_label.setText(f'Total monthly debt obligations: {Monthly_Debt_expenses}')
 
         # dependent label
         dependent_label = QtWidgets.QLabel(self)
-        dependent_label.setFixedSize(QSize(200, 50))
+        dependent_label.setFixedSize(QSize(280, 50))
+        dependent_label.setFont(QtGui.QFont('Arial', 12))
         dependent_label.setText(f'Dependents: {dependent_list}')
         
         Label_layout = QGridLayout()
@@ -366,6 +381,8 @@ class Financial_box(QtWidgets.QWidget):
         Label_layout.addWidget(housing_label, 1, 1)
         Label_layout.addWidget(debts_label, 2, 0)
         Label_layout.addWidget(dependent_label, 2, 1)
+        Label_layout.addWidget(QPushButton('Explain These numbers to me' , clicked = self.Explanation))
+        Label_layout.addWidget(QPushButton('Detailed Report' , clicked = self.detailed_info))
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(assets_button)
@@ -376,24 +393,179 @@ class Financial_box(QtWidgets.QWidget):
         button_layout.addWidget(debt_button)
 
         button_layout2 = QHBoxLayout()
-        button_layout2.addWidget(QPushButton('Log out', clicked = self.closing))
-        button_layout2.addWidget(QPushButton('Exit', clicked = closing))
+        button_layout2.addWidget(QPushButton('Nothing Changes' , clicked = self.Nothing_changes))
+        button_layout2.addWidget(QPushButton('Get a Better Home', clicked = self.closing))
+        button_layout2.addWidget(QPushButton('Get a Better Car', clicked = self.closing))
+        button_layout2.addWidget(QPushButton('Receive More Assets', clicked = self.closing))
+        button_layout2.addWidget(QPushButton('Payoff Debts', clicked = self.closing))
+
+        button_layout3 = QHBoxLayout()
+        button_layout3.addWidget(QPushButton('Switch Jobs' , clicked = self.New_Income))
+        button_layout3.addWidget(QPushButton('Lose Job', clicked = self.Losing_Job))
+        button_layout3.addWidget(QPushButton('Downgrade Car', clicked = self.closing))
+        button_layout3.addWidget(QPushButton('Get More Debts', clicked = self.closing))
+        button_layout3.addWidget(QPushButton('Unexpected Negative Balance', clicked = self.Unexpected_Event))
         
+        # Hypotetical label
+        Hypotetical = QLabel(self)
+        Hypotetical.setFont(QtGui.QFont('Arial', 14))
+        Hypotetical.setText('Where I would be in six months if I...')
+
+        button_layout4 = QHBoxLayout()
+        button_layout4.addWidget(QPushButton('Log out', clicked = self.closing))
+        button_layout4.addWidget(QPushButton('Exit', clicked = closing))
+        
+        # layout with with buttons and lables
         LabelBUtton_layout = QVBoxLayout()
         LabelBUtton_layout.addLayout(Label_layout)
         LabelBUtton_layout.addLayout(button_layout)
+        LabelBUtton_layout.addWidget(Hypotetical)
         LabelBUtton_layout.addLayout(button_layout2)
-        
-        
-        Graph_layout = QVBoxLayout()
+        LabelBUtton_layout.addLayout(button_layout3)
+        LabelBUtton_layout.addLayout(button_layout4)
         
         #Creating the layout manager
-        layout_manager = QHBoxLayout()
-        layout_manager.addLayout(LabelBUtton_layout, 50)
-        self.setLayout(layout_manager)
-
+        self.layout_manager = QVBoxLayout()
+        self.layout_manager.addLayout(LabelBUtton_layout, 50)
+        self.layout_manager.addWidget(add_Graph())
+        self.setLayout(self.layout_manager)
+        
         self.show()
+    #defining unexpected event
+    def Unexpected_Event(self):
+        """Creates a dialog window for Unexpected event"""
+
+        global Interactive_layout
+        global Func_Type
+        
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Unexpected'
+
+        self.rate = QtWidgets.QLineEdit(self)
+        self.rate.setText('0.0')
+        
+        global Layout
+        Layout = QVBoxLayout()
+        Layout.addWidget(QLabel('Enter the cost of the financial unexpected event'))
+        Layout.addWidget(self.rate)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_UnexpectedEventGraph))
+        Layout.addWidget(QPushButton('Back', clicked = self.Back))
+        
+        self.close()
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)
+
     
+
+
+    # defining Nothing changes
+    def Nothing_changes(self):
+        """Orders a graph with the current situation only"""
+
+        global Interactive_layout
+        global Func_Type
+       
+        Func_Type = 'Nothing Changes'
+        self.close()
+
+        #Brings the graph to the front
+        Interactive_layout.addWidget(add_Graph())
+    
+
+    # defining New Income
+    def  New_Income(self):
+        """Orders a graph comparing current and expected income"""
+        global Interactive_layout
+        global Func_Type
+       
+        #setting Func_Type to order desired graph from add_graph window
+        Func_Type = 'Different Income'
+        
+        actual_info = self.input_loader('Income_DBase')
+        #editline to get the rate
+        self.rate = QtWidgets.QLineEdit(self)
+        self.rate.setText(f'{actual_info[1]}')
+
+        self.hours = QtWidgets.QLineEdit(self)
+        self.hours.setText(f'{actual_info[2]}')
+
+        self.close()
+
+        global Layout
+        Layout = QGridLayout()
+        Layout.addWidget(QLabel('Enter the new income information'), 0, 0)
+        Layout.addWidget(QLabel('Enter the new rate'), 1, 0 )
+        Layout.addWidget(self.rate, 1, 1)
+        Layout.addWidget(QLabel('Enter the expected hours per week'), 2, 0)
+        Layout.addWidget(self.hours, 2, 1)
+        Layout.addWidget(QPushButton('Accept', clicked = self.Call_NewIncomeGraph), 3, 0)
+        Layout.addWidget(QPushButton('Back', clicked = self.Back), 3, 1)
+
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)
+
+    def Losing_Job(self):
+        """Orders a graph setting income to zero"""
+
+        global Interactive_layout
+        global Func_Type
+
+        global amount
+        amount = 0
+       
+        Func_Type = 'Lose Job'
+        self.close()
+
+        #Brings the graph to the front
+        Interactive_layout.addWidget(add_Graph())
+
+    def Call_UnexpectedEventGraph(self):
+        """Orders a graph comparing current income vs expected income"""
+        try:
+            global amount
+            amount = float(self.rate.text().strip())
+
+             #setting Func_Type to order desired graph from add_graph window
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+        self.close()
+        global Window
+        Interactive_layout.removeWidget(Window)
+        del Window
+        Interactive_layout.addWidget(add_Graph())
+
+    def Call_NewIncomeGraph(self):
+        """Orders a graph comparing current income vs expected income"""
+        try:
+            global amount
+            amount = income(float(self.rate.text().strip()), float(self.hours.text().strip()))
+        except:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Enter numbers only ')
+            return
+        self.close()
+        global Window
+        Interactive_layout.removeWidget(Window)
+        del Window
+        Interactive_layout.addWidget(add_Graph())
+
+    def Continue(self):
+        self.Pressed = True
+        return self.Pressed
+
+    def Back(self):
+        self.close()
+        global Window
+        Interactive_layout.removeWidget(Window)
+        del Window
+        Interactive_layout.addWidget(Financial_box())
+
     # returns tu main window    
     def closing(self):
         self.close()
@@ -440,8 +612,254 @@ class Financial_box(QtWidgets.QWidget):
         """creates an object type add_Unsecured_Debts"""
         self.close()
         global Interactive_layout 
-        Interactive_layout.addWidget(add_Unsecured_Debts()) 
+        Interactive_layout.addWidget(add_Unsecured_Debts())
+
+    def Explanation(self):
+        """shows explanation"""
+        
+        text = "Income: Your hourly rate and hours per week are used to estimate your yearly income.\n"
+        text += "using the IRS guidelines, the expected federal taxes are also subtracted.\n"
+        text += "For each dependent under the age of 18, a fixed amount is calculated based on the national average,\n"
+        text += "and your gross income is also deducted from your estimated after-tax income, the rest is divided into 12 months.\n\n"
+        text += "Transportation: The estimated annual maintenance and fuel cost is divided into 12 months\n\n"
+        text += "Unsecured Debts: Interest is also included in the monthly payment, and for credit cards,\n" 
+        text += "the monthly payment is estimated aiming to pay off the balance in three years\n"
+
+        QtWidgets.QMessageBox.information(self, 'Explanation', text)
+
+    def detailed_info(self):
+        """Shows detailed info"""
+
+        income_array = self.input_loader('Income_DBase')
+        housing_array = self.input_loader('Housing_DBase')
+        assets_array = self.input_loader('Assets_DBase')
+        transportation_array = self.input_loader('Transportation_DBase')
+        debts_array = self.input_loader('Debts_DBase')
+
+        #number of childs
+        children = 0
+        for child in dependent_list:
+            if int(child) < 18:
+                children  += 1
+
+        #calculating monthly child expenses
+        children_total = children * round(((income_array[1] * income_array[2] * 52)/ 107400) * 12980 / 12, 2)    
+        
+        #Adding only relevant information  (variable or result != 0)
+        text = "Income:\n"
+        if income_array[1] != 0 and income_array[2]:
+            text += " Monthly Gross Income: " + str(round((income_array[1] * income_array[2] * 52)/12, 2)) + '\n'
+        if children_total != 0:
+            text += " Extimated Cost of Rising Your Children per Month: " + str(children_total) + '\n'
+        text += '\n'
+
+        text += "Assets Expenses:\n"
+        if assets_array[1] != 0:
+            text += "  Money on Checking Accounts: " + str(assets_array[1]) + '\n'
+        if assets_array[2] != 0:
+            text += "  Money on Saving Accounts: " + str(assets_array[2]) + '\n'
+        if assets_array[3] != 0:
+            text += "  Money Invested in Bonds: "  +  str(assets_array[3]) + '\n'      
+        if assets_array[4] != 0:
+            text += "  Money Invested in Stocks: "  +  str(assets_array[4]) + '\n'
+        if assets_array[1] != 0:
+            text += "  Cash: "  +  str(assets_array[5]) + '\n'
+        text += '\n'
+
+        text += "Housing Expenses:\n"
+        if housing_array[1] != 0:
+            text += "  Monthly House Payment: " + str(housing_array[1]) + '\n'
+        if housing_array[2] != 0:
+            text += "  Monthly Extimated Property insurance: " + str(housing_array[2]) + '\n'
+        if housing_array[3] != 0:
+            text += "  Monthly Electric Bill: " + str(housing_array[3]) + '\n'
+        if housing_array[4] != 0:    
+            text += "  Monthly Internet Bill: " + str(housing_array[4]) + '\n'
+        if housing_array[5] != 0:
+            text += "  Monthly Extimated Property Taxes: " + str(housing_array[5]) + '\n'
+        if housing_array[6] != 0:
+            text += "  Monthly HOA Dues: " + str(housing_array[6]) + '\n'
+        if housing_array[7] != 0:
+            text += "  Monthly Extimated Gas Bill: " + str(housing_array[7]) + '\n'
+        text += '\n'
+
+        text += "Transpotation Expenses:\n" 
+        if transportation_array[1] != 0:
+            text += "  Monthly Car Payment: " + str(transportation_array[1]) + '\n'
+        if transportation_array[2] != 0:
+            text += "  Monthly car Insurance Payment: " + str(transportation_array[2]) + '\n'
+        if transportation_array[3] != 0:
+            text += "  Monthly Car Extimated Maintenance: " + str(round(transportation_array[3]* 0.09, 2)) + '\n'
+            text += "  Monthly Fuel Cost : " + str(round(transportation_array[3] * 0.0955, 2)) + '\n' 
+        text += '\n'   
+        
+        text += "Monthly Unsecured Debt Obligations:\n"
+        if debts_array[21] != 0:
+            text += "  Credit Card1 Monthly Payment: " + str(debts_array[21]) + '\n'
+        if debts_array[22] != 0:
+            text += "  Credit Card2 Monthly Payment: " + str(debts_array[22]) + '\n'
+        if debts_array[23] != 0:
+            text += "  Credit Card3 Monthly Payment: " + str(debts_array[23]) + '\n'
+        if debts_array[24] != 0:
+            text += "  Credit Card4 Monthly Payment: " + str(debts_array[24]) + '\n'
+        if debts_array[25] != 0:
+            text += "  Loan1 Monthly Payment: " + str(debts_array[25]) + '\n'
+        if debts_array[26] != 0:
+            text += "  Loan2 Card1 Monthly Payment: " + str(debts_array[26]) + '\n'
+        if debts_array[27] != 0:
+            text += "  Loan3 Card1 Monthly Payment: " + str(debts_array[27]) + '\n'
+        if debts_array[28] != 0:
+            text += "  Loan4 Card1 Monthly Payment: " + str(debts_array[28]) + '\n'
     
+        QtWidgets.QMessageBox.information(self, 'Detailed Information', text)
+    
+    def input_loader(self, file):
+        """This function loads current input"""     
+        
+        info1 = []
+        with open(file, 'a+') as DB:
+            DB.seek(0)
+            for line in DB:
+                info = line.split()
+                if len(info) == 0:
+                    continue
+                if str(User_Id) == decode_string(info[0]):
+                    for i in info:
+                        info1.append(float(decode_string(i)))
+                    return info1
+        
+#//////////////////Sub Window Graph //////////////////////////////
+class add_Graph(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(600, 600, 400, 200)
+        self.setWindowTitle('Add Financial information')
+
+        #creating graphs
+        
+        # variables
+        global amount
+        
+        Liabilities = Monthly_Debt_expenses  + Monthly_housing_expenses
+        Liabilities += Monthly_transportation_expenses 
+
+        Residual_income = Monthly_Income - Liabilities
+
+        months = []
+        for month in range(7):
+            months.append(Residual_income*month)
+
+        default_graph = MplCanvas(self, width=5, height=4, dpi=100)
+    
+        #default dictionary
+        d = {
+               'Current situation' : months
+            }
+        
+        if Func_Type == 'Different Income':
+
+            Residual_income += amount - Monthly_Income
+            months1 = []
+            for i in range(7):
+                months1.append(Residual_income*i)
+
+            d['If you switch jobs'] = months1
+
+        elif Func_Type == 'Lose Job':
+
+            months1 = []
+            for i in range(7):
+                months1.append(Liabilities*i*(-1))
+  
+            d['Lose jobs'] = months1
+
+        # creating the informational layout
+        layout_info = QVBoxLayout()
+
+        text = f'Your projected accumulated capital if your situation does not change  is {round(months[6], 2)}.\n'
+        if Func_Type == 'Different Income':
+            text += f'If you switch jobs your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            if months[6] < months1[6]:
+                text += f'This is better than your current situation.\n'
+                if months1[6] > 0 and  Monthly_Debt_expenses > 0:
+                    text += "You should pay some debts as soon you start receiving the new income.\n"
+                elif months1[6] > 0:
+                    text += "Although you would have extra money do not forget to save some.\n"
+                else:
+                    text += "Although your situation would look better it would not be enough to afford your current live style.\n"
+            elif months1[6] - months[6] < 50:
+                text += "Your financial situation would be about the same if you switch jobs.\n"
+                text += "However money should not be the main or only reason for your decision.\n"
+            else:
+                text += "Your financial situation would be worse if you switch jobs.\n"
+                text += "However money should not be the main or only reason for your decision.\n"
+        elif Func_Type == 'Lose Job':
+            text += f'If you lose your job your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f"Your total assets is {Total_assets}.\n"
+            
+            how_long = int(Total_assets/Liabilities)
+            if Total_assets > months1[6]:
+                text += "You have enough assets to afford this period. You can take a break if you want to.\n"
+            
+            elif how_long > 0:
+                text += f"You have enough assets to afford {how_long}. Think about your situaation carefuly.\n"
+
+            else:
+                text += "You do not have enough assets to afford a month. " 
+                text += "You should start looking for another job asap.\n"
+        elif Func_Type == 'Unexpected':
+            text += f"Your total assets is {Total_assets} and you need {amount}.\n"
+            if Total_assets >= amount:
+                text += f"You can cover this amount with your assets "
+                if Total_assets - amount > 500:
+                    text += f"and you still will have {Total_assets - amount}.\n" 
+                elif Total_assets - amount < 500 and Total_assets - amount > 0: 
+                    text += f"but this will almost wipe out your assets entirelly.\n"
+                else: 
+                    text += "but this is it.\n "
+            if amount > Total_assets:
+                text += f"You do not have enough liquidity to cover this amount entiraly.\n"
+                text += f"You still need {amount - Total_assets}.\n If this is not an "
+                text += f" emergency you may want to avoid this event.\n"
+                text += f"otherwise you need to borrow the difference\n" 
+
+
+                     
+
+                    
+
+                
+
+        
+        if Func_Type != 'Default':
+            layout_info.addWidget(QLabel(text))
+        layout_info.addWidget(QPushButton("Back", clicked = self.Closing))
+        
+        #defining the data frame
+        df = pd.DataFrame(d)
+        df.plot(ax=default_graph.axes)
+        
+        #Creating the layout manager
+        layout_manager = QVBoxLayout()
+        layout_manager.addWidget(default_graph)
+        layout_manager.addLayout(layout_info)
+        self.setLayout(layout_manager)
+        
+            
+        self.show()   
+    
+    
+    def Closing(self):
+        global Func_Type
+        Func_Type = 'Default' 
+
+        global amount
+        amount = Monthly_Income  
+        self.close()
+
+        global Interactive_layout
+        Interactive_layout.addWidget(Financial_box())
+
 #//////////////////SUBWINDOWs OF ADD FINANCE//////////////////////
 #-------------------------Income window--------------------------
 class add_income(QtWidgets.QWidget):
@@ -1449,7 +1867,7 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
 
     # this function saves the information and return to the dashboard    
     def updatingDebt(self):
-        """This function calculates updates the total debts"""
+        """This function calculates and updates the total debts"""
 
         if float(self.loan11_line.text().strip()) != 0 and float(self.loan13_line.text().strip()) == 0:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'If a loan have a balance cannot have 0 as loan term ')
@@ -1541,8 +1959,13 @@ class add_Unsecured_Debts(QtWidgets.QWidget):
         self.close()
         global Interactive_layout 
         Interactive_layout.addWidget(Financial_box())
-#--------graph window
 
+#--------graph window---------------------------------------
+class MplCanvas(FigureCanvasQTAgg):
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
+        super(MplCanvas, self).__init__(fig)
 
 #********************CREATING THE APP*********************************           
 def AppBox():
@@ -1586,7 +2009,6 @@ def income(hourly_rate, weekly_hours, house_hold = True):
     """This function returns a realistic income after taxes 
     and other obligations not ususally consider are deducted"""
 
-    
     #This variable holds a gross yearlycalculated income
     y_income = hourly_rate * weekly_hours * 52
 
@@ -1806,8 +2228,6 @@ dependent_list = []
 
 #This var stores the position of the user line in file
 line_position = 0
-
-
-
+ 
 #----------------APPLICATION-------------------------------
 AppBox()
