@@ -902,7 +902,7 @@ class Financial_box(QtWidgets.QWidget):
         text = "Income: Your hourly rate and hours per week are used to estimate your yearly income.\n"
         text += "using the IRS guidelines, the expected federal taxes are also subtracted.\n"
         text += "For each dependent under the age of 18, a fixed amount is calculated based on the national average,\n"
-        text += "and your gross income is also deducted from your estimated after-tax income, the rest is divided into 12 months.\n\n"
+        text += "and this amount substracted from your gross income is also deducted from your estimated after-tax income, the rest is divided into 12 months.\n\n"
         text += "Transportation: The estimated annual maintenance and fuel cost is divided into 12 months\n\n"
         text += "Unsecured Debts: Interest is also included in the monthly payment, and for credit cards,\n" 
         text += "the monthly payment is estimated aiming to pay off the balance in three years\n"
@@ -938,7 +938,7 @@ class Financial_box(QtWidgets.QWidget):
             text += " Extimated Cost of Rising Your Children per Month: " + str(children_total) + '\n'
         text += '\n'
 
-        text += "Assets Expenses:\n"
+        text += "Total Assets:\n"
         if assets_array != None:
             if assets_array[1] != 0:
                 text += "  Money on Checking Accounts: " + str(assets_array[1]) + '\n'
@@ -1169,7 +1169,7 @@ class add_Graph(QtWidgets.QWidget):
                     else:
                         text += "and you get to keep the change.\n "
                 else:
-                    text += f"You can cover {int(amount/Liabilities)} months.\n"
+                    text += f"You can cover {int(amount/abs(Residual_income))} months with this money.\n"
             elif months[6] >= 0 and Monthly_Debt_expenses > 0:
                 text += "You should use this amount to pay some debts.\n"
             elif months[6] >= 0 and Total_assets < 500:
@@ -1230,7 +1230,7 @@ class add_Graph(QtWidgets.QWidget):
                     text += "This will create a negative projected balance\n"
                 else:
                     text += "You still can afford this change.\n"                             
-            elif amount - Monthly_transportation_expenses  < 50 or amount - Monthly_transportation_expenses  > -50:
+            elif -50 < amount - Monthly_transportation_expenses  < 50:
                  text += "This is about your current monthly transportation expenses.\n"
             else:  
                 text += "This is less than your current monthly transportation expenses and\n"
@@ -1773,7 +1773,11 @@ class add_dependents(QtWidgets.QWidget):
             except:
                 QtWidgets.QMessageBox.critical(self, 'Try Again', 'Please follow the instructions')
                 return
-        
+            for child in total:
+                if float(child) < 0 or float(child) > 140:
+                    QtWidgets.QMessageBox.critical(self, 'Try Again', 'Please review the age of your dependents')
+                    return
+
             if total != dependent_list:
                 dependent_list = total
         
