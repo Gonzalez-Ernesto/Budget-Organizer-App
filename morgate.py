@@ -1,12 +1,12 @@
 #*******************************GRAPHIC USER INTERFACE*******************
-import sys , random, matplotlib.pyplot as ptl , numpy as np, pandas as pd
+import sys , random, pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 from PyQt5 import QtWidgets
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QHBoxLayout, QVBoxLayout, QPushButton, QStackedLayout, QLabel, QGridLayout
-from PyQt5.QtCore import  QRect, QPropertyAnimation, QSize
+from PyQt5 import  QtGui
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QGridLayout
+from PyQt5.QtCore import QSize
 
 
 #----------------Main Window---------------------------------
@@ -72,7 +72,7 @@ class User_box(QtWidgets.QWidget):
         # user label top
         self.user = QtWidgets.QLabel(self)
         self.user.move(135, 20)
-        self.user.setText('Enter the desired username(14 character max)')
+        self.user.setText('Enter the desired username(Between 5 to 14 character, no spaces allowed)')
         self.user.adjustSize()
 
         # user lineedit
@@ -88,7 +88,7 @@ class User_box(QtWidgets.QWidget):
         # password label top
         self.user = QtWidgets.QLabel(self)
         self.user.move(135, 90)
-        self.user.setText('Enter the desired password(14 character max)')
+        self.user.setText('Enter the desired password(Between 5 to 14 character, no spaces allowed)')
         self.user.adjustSize()
         
         # password line edit
@@ -156,21 +156,26 @@ class User_box(QtWidgets.QWidget):
         
             DB.close()
 
-
         # if-elif-else selection to process the input
         if taken:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username already taken')    
         elif len(userName) > 14:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username is too long')
 
+        elif len(userName.split()) > 1:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Spaces are not allowed')    
+
         elif len(userName) < 5:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Username of at least 5 characters')
 
-        elif password == '' or len(password) < 5:
+        elif len(password) < 5:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Password of at least 5 characters')
 
         elif len(password) > 14:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Password is too long')
+
+        elif len(password.split()) > 1:
+            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Spaces are not allowed')
 
         elif  password != password2:
             QtWidgets.QMessageBox.critical(self, 'Try Again', 'Passwords do ot match')
@@ -431,8 +436,6 @@ class Financial_box(QtWidgets.QWidget):
         
         self.show()
 
-    
-    
     #defining buying car
     def Buying_Car(self):
         """Creates a dialog window for buying car"""
@@ -1120,7 +1123,7 @@ class add_Graph(QtWidgets.QWidget):
                 elif months1[6] > 0:
                     text += "Although you would have extra money do not forget to save some.\n"
                 else:
-                    text += "Although your situation would look better it would not be enough to afford your current live style.\n"
+                    text += "Although your situation would look better it would not be enough to afford your current lifestyle.\n"
             elif months1[6] - months[6] < 50 and months1[6] - months[6] > 0:
                 text += "Your financial situation would be about the same if you switch jobs.\n"
                 text += "However money should not be the main or only reason for your decision.\n"
@@ -1192,7 +1195,7 @@ class add_Graph(QtWidgets.QWidget):
         elif Func_Type == 'Pay off Debt':
             text += f'Your projected accumulated capital if you paritally or totally pay off your debts is {round(months1[6], 2)}.\n'
             if amount > Monthly_Debt_expenses:
-                text += "Remember that you cannot pay more than what you owe so the rest goes towar your assets.\n"
+                text += "Remember that you cannot pay more than what you owe so the rest goes toward your assets.\n"
             text += f'Paying of your debts is good for your financial health.\n'
             if int(Monthly_Debt_expenses) >= int(amount):
                 text += f'In this case you would be debt free.\n'
