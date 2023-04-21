@@ -15,6 +15,8 @@ class App_Window(QtWidgets.QWidget):
         super().__init__(* args, ** kwargs)
         self.setGeometry(300, 300, 600, 600)
         self.setWindowTitle('Budget Organizer')
+        self.setFont(QtGui.QFont("Arial", 14))
+        self.setStyleSheet("background-color: lightblue;")
         
         global Interactive_layout
         Interactive_layout = QVBoxLayout()
@@ -30,10 +32,33 @@ class Menu_Window(QtWidgets.QWidget):
         self.setGeometry(300, 300, 600, 600)
         self.setWindowTitle('Menu')
 
+        
+        # create account button
+        create_account = QPushButton(self)
+        create_account.setFont(QtGui.QFont("Arial", 14))
+        create_account.setText('Create Account')
+        create_account.setStyleSheet("background-color : lightgrey")
+        create_account.clicked.connect(self.signup)
+
+         # create account button
+        login = QPushButton(self)
+        login.setFont(QtGui.QFont("Arial", 14))
+        login.setText('Login')
+        login.setStyleSheet("background-color: lightgrey")
+        login.clicked.connect(self.login)
+
+         # exit button
+        exit = QPushButton(self)
+        exit.setFont(QtGui.QFont("Arial", 14))
+        exit.setText('Exit')
+        exit.setStyleSheet("background-color : lightgray")
+        exit.clicked.connect(closing) 
+        
+        
         button_layout = QHBoxLayout()
-        button_layout.addWidget(QPushButton('Create Account', clicked = self.signup))
-        button_layout.addWidget(QPushButton('Login', clicked = self.login))
-        button_layout.addWidget(QPushButton('Exit', clicked = closing))
+        button_layout.addWidget(create_account)
+        button_layout.addWidget(login)
+        button_layout.addWidget(exit)
 
         #Creating the layout manager
         layout_manager = QHBoxLayout()
@@ -65,67 +90,106 @@ class User_box(QtWidgets.QWidget):
         self.setWindowTitle('Create user')
 
         # user label
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(40, 50)
-        self.user.setText('User name:')
+        user_name = QtWidgets.QLabel(self)
+        user_name.setFont(QtGui.QFont("Arial", 11))
+        user_name.setText('User name:')
         
         # user label top
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(135, 20)
-        self.user.setText('Enter the desired username(Between 5 to 14 character, no spaces allowed)')
-        self.user.adjustSize()
+        user_top = QtWidgets.QLabel(self)
+        user_top.setFont(QtGui.QFont("Arial", 11))
+        user_top.setText('Enter the desired username(Between 5 to 14 character, no spaces allowed)')
 
         # user lineedit
-        self.Username = QtWidgets.QLineEdit(self)
-        self.Username.setObjectName('User Name')
-        self.Username.move(135, 50)
+        self.Username_lineedit = QtWidgets.QLineEdit(self)
+        self.Username_lineedit.setStyleSheet("background-color : white")
+        self.Username_lineedit.setObjectName('User Name')
+        self.Username_lineedit.adjustSize()
 
         # password label
-        self.psswd = QtWidgets.QLabel(self)
-        self.psswd.move(40, 130)
-        self.psswd.setText('Password:')
+        passwd_label = QtWidgets.QLabel(self)
+        passwd_label.setFont(QtGui.QFont("Arial", 11))
+        passwd_label.setText('Password:')
 
         # password label top
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(135, 90)
-        self.user.setText('Enter the desired password(Between 5 to 14 character, no spaces allowed)')
-        self.user.adjustSize()
+        passwd_label_top = QtWidgets.QLabel(self)
+        passwd_label_top.setFont(QtGui.QFont("Arial", 11))
+        passwd_label_top.setText('Enter the desired password(Between 5 to 14 character, no spaces allowed)')
         
-        # password line edit
-        self.Password = QtWidgets.QLineEdit(self)
-        self.Password.setObjectName('Password')
-        self.Password.setEchoMode(2)
-        self.Password.move(135, 130)
+        # password lineedit
+        self.passwd_lineedit = QtWidgets.QLineEdit(self)
+        self.passwd_lineedit.setObjectName('Password')
+        self.passwd_lineedit.setStyleSheet("background-color : white")
 
         # 2nd password label
-        self.psswd2 = QtWidgets.QLabel(self)
-        self.psswd2.move(40, 210)
-        self.psswd2.setText('Re-enter Password:')
+        psswd2_label = QtWidgets.QLabel(self)
+        psswd2_label.setFont(QtGui.QFont("Arial", 11))
+        psswd2_label.setText('Re-enter Password:')
 
-        # password label top
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(135, 170)
-        self.user.setText('Re-enter desired password')
-        self.user.adjustSize()
+        # password label top2
+        passwd_label_top2 = QtWidgets.QLabel(self)
+        passwd_label_top2.setFont(QtGui.QFont("Arial", 11))
+        passwd_label_top2.setText('Re-enter desired password')
 
-        # 2nd password line edit
-        self.Re_enterpassword = QtWidgets.QLineEdit(self)
-        self.Re_enterpassword.setObjectName('Re_Enter')
-        self.Re_enterpassword.setEchoMode(2)
-        self.Re_enterpassword.move(135, 210)
+        # 2nd password lineedit
+        self.Re_enterpassword_lineedit = QtWidgets.QLineEdit(self)
+        self.Re_enterpassword_lineedit.setObjectName('Re_Enter')
+        self.Re_enterpassword_lineedit.setEchoMode(2)
+        self.Re_enterpassword_lineedit.setStyleSheet("background-color : white")
          
         # accept button
-        self.accept = QtWidgets.QPushButton(self)
-        self.accept.setText('Accept')
-        self.accept.move(100, 250)
-        self.accept.clicked.connect(self.saving_name)
+        accept = QtWidgets.QPushButton(self)
+        accept.setFont(QtGui.QFont("Arial", 12))
+        accept.setStyleSheet("background-color : lightgrey")
+        accept.setText('Accept')
+        accept.clicked.connect(self.saving_name)
 
         # cancel button
-        self.cancel = QtWidgets.QPushButton(self)
-        self.cancel.setText('Cancel')
-        self.cancel.move(180, 250)
-        self.cancel.clicked.connect(self.closing)
+        cancel = QtWidgets.QPushButton(self)
+        cancel.setFont(QtGui.QFont("Arial", 12))
+        cancel.setStyleSheet("background-color : lightgrey")
+        cancel.setText('Cancel')
+        cancel.clicked.connect(self.closing)
         
+        # user input layout
+        user_layout = QHBoxLayout()
+        user_layout.addWidget(user_name)
+        user_layout.addWidget(self.Username_lineedit)
+
+        # passwrd input layout
+        passwrd_layout = QHBoxLayout()
+        passwrd_layout.addWidget(passwd_label)
+        passwrd_layout.addWidget(self.passwd_lineedit)
+        
+        # passwrd2 input layout
+        passwrd2_layout = QHBoxLayout()
+        passwrd2_layout.addWidget(psswd2_label)
+        passwrd2_layout.addWidget(self.Re_enterpassword_lineedit)
+       
+
+        # passwrd2 input layout
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(accept)
+        button_layout.addWidget(cancel)
+
+        #Creating the layout manager
+        layout_manager = QVBoxLayout()
+        layout_manager.addWidget(user_top)
+        layout_manager.addLayout(user_layout)
+        layout_manager.addWidget(passwd_label_top)
+        layout_manager.addLayout(passwrd_layout)
+        layout_manager.addWidget(passwd_label_top2)
+        layout_manager.addLayout(passwrd2_layout)
+        #adding empty labels 
+        layout_manager.addWidget(QLabel(""))
+        layout_manager.addWidget(QLabel(""))
+        # adding the buttons layout
+        layout_manager.addLayout(button_layout)
+        #adding empty labels
+        layout_manager.addWidget(QLabel(""))
+        layout_manager.addWidget(QLabel(""))
+        self.setLayout(layout_manager)
+
+
         # showing the window
         self.show()
 
@@ -138,9 +202,9 @@ class User_box(QtWidgets.QWidget):
         """This function process all entered information and writes it on a file"""
         
         # these varaiables store the inputs
-        userName = self.Username.text().strip()
-        password = self.Password.text().strip()
-        password2 = self.Re_enterpassword.text().strip() 
+        userName = self.Username_lineedit.text().strip()
+        password = self.passwd_lineedit.text().strip()
+        password2 = self.Re_enterpassword_lineedit.text().strip() 
         
         taken = False
 
@@ -208,7 +272,7 @@ class User_box(QtWidgets.QWidget):
             # writing user information
             with open('Data_base', 'a+') as  DB:
                 DB.write(decode_string(userName) + ' ')
-                DB.write(decode_string(password)+ ' ')
+                DB.write(decode_string(password) + ' ')
                 DB.write(decode_string('0.0 0.0 0.0 0.0 0.0 '))
                 DB.write(f"{decode_string(str(Id))} ")
                 DB.write(decode_string('none') + '\n')
