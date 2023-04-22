@@ -5,7 +5,7 @@ from matplotlib.figure import Figure
 
 from PyQt5 import QtWidgets
 from PyQt5 import  QtGui
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QGridLayout
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QLabel, QGridLayout, QMessageBox
 from PyQt5.QtCore import QSize
 
 
@@ -16,11 +16,13 @@ class App_Window(QtWidgets.QWidget):
         self.setGeometry(300, 300, 600, 600)
         self.setWindowTitle('Budget Organizer')
         self.setFont(QtGui.QFont("Arial", 14))
-        self.setStyleSheet("background-color: lightblue;")
+        self.setStyleSheet("background-color : lightblue")
+        
         
         global Interactive_layout
         Interactive_layout = QVBoxLayout()
         Interactive_layout.addWidget(Menu_Window())
+        #Interactive_layout.setStyleSheet("background-color: lightblue;")
         self.setLayout(Interactive_layout)
     
         self.show()
@@ -31,7 +33,6 @@ class Menu_Window(QtWidgets.QWidget):
         super().__init__(* args, ** kwargs)
         self.setGeometry(300, 300, 600, 600)
         self.setWindowTitle('Menu')
-
         
         # create account button
         create_account = QPushButton(self)
@@ -93,6 +94,7 @@ class User_box(QtWidgets.QWidget):
         user_name = QtWidgets.QLabel(self)
         user_name.setFont(QtGui.QFont("Arial", 11))
         user_name.setText('User name:')
+        user_name.setFixedWidth(200)
         
         # user label top
         user_top = QtWidgets.QLabel(self)
@@ -103,12 +105,13 @@ class User_box(QtWidgets.QWidget):
         self.Username_lineedit = QtWidgets.QLineEdit(self)
         self.Username_lineedit.setStyleSheet("background-color : white")
         self.Username_lineedit.setObjectName('User Name')
-        self.Username_lineedit.adjustSize()
+        self.Username_lineedit.setFixedWidth(200)
 
         # password label
         passwd_label = QtWidgets.QLabel(self)
         passwd_label.setFont(QtGui.QFont("Arial", 11))
         passwd_label.setText('Password:')
+        passwd_label.setFixedWidth(200)
 
         # password label top
         passwd_label_top = QtWidgets.QLabel(self)
@@ -118,12 +121,15 @@ class User_box(QtWidgets.QWidget):
         # password lineedit
         self.passwd_lineedit = QtWidgets.QLineEdit(self)
         self.passwd_lineedit.setObjectName('Password')
+        self.passwd_lineedit.setEchoMode(2)
         self.passwd_lineedit.setStyleSheet("background-color : white")
+        self.passwd_lineedit.setFixedWidth(200)
 
         # 2nd password label
         psswd2_label = QtWidgets.QLabel(self)
         psswd2_label.setFont(QtGui.QFont("Arial", 11))
         psswd2_label.setText('Re-enter Password:')
+        psswd2_label.setFixedWidth(200)
 
         # password label top2
         passwd_label_top2 = QtWidgets.QLabel(self)
@@ -135,6 +141,7 @@ class User_box(QtWidgets.QWidget):
         self.Re_enterpassword_lineedit.setObjectName('Re_Enter')
         self.Re_enterpassword_lineedit.setEchoMode(2)
         self.Re_enterpassword_lineedit.setStyleSheet("background-color : white")
+        self.Re_enterpassword_lineedit.setFixedWidth(200)
          
         # accept button
         accept = QtWidgets.QPushButton(self)
@@ -142,6 +149,7 @@ class User_box(QtWidgets.QWidget):
         accept.setStyleSheet("background-color : lightgrey")
         accept.setText('Accept')
         accept.clicked.connect(self.saving_name)
+        accept.setFixedSize(QSize(100, 30))
 
         # cancel button
         cancel = QtWidgets.QPushButton(self)
@@ -149,6 +157,7 @@ class User_box(QtWidgets.QWidget):
         cancel.setStyleSheet("background-color : lightgrey")
         cancel.setText('Cancel')
         cancel.clicked.connect(self.closing)
+        cancel.setFixedSize(QSize(100, 30))
         
         # user input layout
         user_layout = QHBoxLayout()
@@ -166,7 +175,7 @@ class User_box(QtWidgets.QWidget):
         passwrd2_layout.addWidget(self.Re_enterpassword_lineedit)
        
 
-        # passwrd2 input layout
+        # button layout
         button_layout = QHBoxLayout()
         button_layout.addWidget(accept)
         button_layout.addWidget(cancel)
@@ -222,27 +231,77 @@ class User_box(QtWidgets.QWidget):
 
         # if-elif-else selection to process the input
         if taken:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username already taken')    
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Username already taken')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
+    
         elif len(userName) > 14:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Username is too long')
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Username is too long')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
 
         elif len(userName.split()) > 1:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Spaces are not allowed')    
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Spaces are not allowed')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()    
 
         elif len(userName) < 5:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Username of at least 5 characters')
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('You need a Username of at least 5 characters')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
+
 
         elif len(password) < 5:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'You need a Password of at least 5 characters')
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('You need a Password of at least 5 characters')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
 
         elif len(password) > 14:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Password is too long')
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Password is too long')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
 
         elif len(password.split()) > 1:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Spaces are not allowed')
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Spaces are not allowed')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
 
         elif  password != password2:
-            QtWidgets.QMessageBox.critical(self, 'Try Again', 'Passwords do ot match')
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Passwords do ot match')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
 
         else:
             #This block generates the unique Id number
@@ -277,7 +336,17 @@ class User_box(QtWidgets.QWidget):
                 DB.write(f"{decode_string(str(Id))} ")
                 DB.write(decode_string('none') + '\n')
                 DB.close()
-            QtWidgets.QMessageBox.information(self, 'Success', 'your information was saved')
+            
+            # creating success message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('your information was saved')
+            msg.setIcon(QMessageBox.Information)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
+
+            #QtWidgets.QMessageBox.information(self, 'Success', 'your information was saved')
+
             self.close()
             global Interactive_layout 
             Interactive_layout.addWidget(Login_box())   
@@ -291,49 +360,73 @@ class Login_box(QtWidgets.QWidget):
         self.setWindowTitle('Login')
     
         # user label
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(40, 50)
-        self.user.setText('User name:')
-        
-        # user label top
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(135, 20)
-        self.user.setText('Enter username')
-        self.user.adjustSize()
+        username_label = QtWidgets.QLabel(self)
+        username_label.setFont(QtGui.QFont("Arial", 11))
+        username_label.setText('User name:')
+        username_label.setFixedWidth(200)
 
         # user lineedit
-        self.Username = QtWidgets.QLineEdit(self)
-        self.Username.setObjectName('User Name')
-        self.Username.move(135, 50)
+        self.Username_lineedit = QtWidgets.QLineEdit(self)
+        self.Username_lineedit.setObjectName('User Name')
+        self.Username_lineedit.setStyleSheet("background-color : white")
+        self.Username_lineedit.setFixedWidth(200)
 
         # password label
-        self.psswd = QtWidgets.QLabel(self)
-        self.psswd.move(40, 130)
-        self.psswd.setText('Password:')
+        passwd_label = QtWidgets.QLabel(self)
+        passwd_label.setFont(QtGui.QFont("Arial", 11))
+        passwd_label.move(40, 130)
+        passwd_label.setText('Password:')
+        passwd_label.setFixedWidth(200)
 
-        # password label top
-        self.user = QtWidgets.QLabel(self)
-        self.user.move(135, 90)
-        self.user.setText('Enter password')
-        self.user.adjustSize()
         
         # password line edit
         self.Password = QtWidgets.QLineEdit(self)
         self.Password.setObjectName('Password')
         self.Password.setEchoMode(2)
-        self.Password.move(135, 130)
+        self.Password.setFixedWidth(200)
+        self.Password.setStyleSheet("background-color : white")
 
         # accept button
-        self.accept = QtWidgets.QPushButton(self)
-        self.accept.setText('Accept')
-        self.accept.move(100, 170)
-        self.accept.clicked.connect(self.logging)
+        accept = QtWidgets.QPushButton(self)
+        accept.setFont(QtGui.QFont("Arial", 12))
+        accept.setStyleSheet("background-color : lightgrey")
+        accept.setText('Accept')
+        accept.clicked.connect(self.logging)
+        accept.setFixedSize(QSize(100, 30))
 
         # cancel button
         cancel = QtWidgets.QPushButton(self)
+        cancel.setFont(QtGui.QFont("Arial", 12))
+        cancel.setStyleSheet("background-color : lightgrey")
         cancel.setText('Cancel')
-        cancel.move(180, 170)
         cancel.clicked.connect(self.closing)
+        cancel.setFixedSize(QSize(100, 30))
+        
+        # user input layout
+        user_layout = QHBoxLayout()
+        user_layout.addWidget(username_label)
+        user_layout.addWidget(self.Username_lineedit)
+
+        # passwrd input layout
+        passwrd_layout = QHBoxLayout()
+        passwrd_layout.addWidget(passwd_label)
+        passwrd_layout.addWidget(self.Password) 
+
+        # button layout
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(accept)
+        button_layout.addWidget(cancel)
+
+        # main layout
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(QLabel(""))
+        main_layout.addLayout(user_layout)
+        main_layout.addLayout(passwrd_layout)
+        main_layout.addWidget(QLabel(""))
+        main_layout.addLayout(button_layout)
+        self.setLayout(main_layout)
+
+
         
         # showing the window
         self.show()
@@ -348,14 +441,28 @@ class Login_box(QtWidgets.QWidget):
     def logging(self):
         """This function analyses the input from user"""
 
-        if  info_Loader(self.Username.text().strip(), self.Password.text().strip()):
-                QtWidgets.QMessageBox.information(self, 'Sucess', 'you are logged in')
-                self.close()
-                global Interactive_layout 
-                Interactive_layout.addWidget(Financial_box())
+        if  info_Loader(self.Username_lineedit.text().strip(), self.Password.text().strip()):
+                
+            # creating success message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('you are logged in')
+            msg.setIcon(QMessageBox.Information)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()
 
-        else:
-                QtWidgets.QMessageBox.critical(self, 'Try Again', 'Wrong User or Passwords ')    
+            self.close()
+            global Interactive_layout 
+            Interactive_layout.addWidget(Financial_box())
+
+        else:   
+            #creating  error message
+            msg = QtWidgets.QMessageBox(self)
+            msg.setWindowTitle('Try Again')
+            msg.setText('Wrong User or Passwords')
+            msg.setIcon(QMessageBox.Warning)
+            msg.setStyleSheet("background-color : lightgrey")
+            x = msg.exec_()   
 
 #************FINANCE_WINDOW***************************       
 class Financial_box(QtWidgets.QWidget):
@@ -379,80 +486,139 @@ class Financial_box(QtWidgets.QWidget):
 
         # add assets button
         assets_button = QtWidgets.QPushButton(self)
+        assets_button.setFont(QtGui.QFont("Arial", 11))
         assets_button.setText('Assets')
         assets_button.clicked.connect(self.add_Assets)
+        assets_button.setStyleSheet("background-color : lightgrey")
 
         # add dependents button
         dependents_button = QtWidgets.QPushButton(self)
+        dependents_button.setFont(QtGui.QFont("Arial", 11))
         dependents_button.setText('Dependants')
         dependents_button.clicked.connect(self.add_dependents)
+        dependents_button.setStyleSheet("background-color : lightgrey")
         
         # add income button
         income_button = QtWidgets.QPushButton(self)
+        income_button.setFont(QtGui.QFont("Arial", 11))
         income_button.setText('Income')
         income_button.clicked.connect(self.add_income_window)
+        income_button.setStyleSheet("background-color : lightgrey")
 
         # add transportation expenses button
         transportation_button = QtWidgets.QPushButton(self)
+        transportation_button.setFont(QtGui.QFont("Arial", 11))
         transportation_button.setText('Transportation')
         transportation_button.clicked.connect(self.add_transportation)
+        transportation_button.setStyleSheet("background-color : lightgrey")
         
         # add housing expenses button
         housing_button = QtWidgets.QPushButton(self)
+        housing_button.setFont(QtGui.QFont("Arial", 11))
         housing_button.setText('Housing')
         housing_button.clicked.connect(self.add_housing)
+        housing_button.setStyleSheet("background-color : lightgrey")
 
         # add unsecured debt button
         debt_button = QtWidgets.QPushButton(self)
+        debt_button.setFont(QtGui.QFont("Arial", 11))
         debt_button.setText('Unsecured debt')
         debt_button.clicked.connect(self.add_Unsecured_Debts)
-
-        # income label
-        income_label = QtWidgets.QLabel(self)
-        income_label.setFixedSize(QSize(280, 50))
-        income_label.setFont(QtGui.QFont('Arial', 12))
-        income_label.setText(f'Monthly income: {Monthly_Income} ')
-
-        # asset label 
-        asset_label = QtWidgets.QLabel(self)
-        asset_label.setFixedSize(QSize(280, 50))
-        asset_label.setFont(QtGui.QFont('Arial', 12))
-        asset_label.setText(f'Total assets: {Total_assets}')
-
-        # transportation label 
-        transportation_label = QtWidgets.QLabel(self)
-        transportation_label.setFixedSize(QSize(280, 50))
-        transportation_label.setFont(QtGui.QFont('Arial', 12))
-        transportation_label.setText(f'Monthly transportation expenses: {Monthly_transportation_expenses}')
-
-        # housing label 
-        housing_label = QtWidgets.QLabel(self)
-        housing_label.setFixedSize(QSize(280, 50))
-        housing_label.setFont(QtGui.QFont('Arial', 12))
-        housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
-
-        # debts label 
-        debts_label = QtWidgets.QLabel(self)
-        debts_label.setFixedSize(QSize(280, 50))
-        debts_label.setFont(QtGui.QFont('Arial', 12))
-        debts_label.setText(f'Total monthly debt obligations: {Monthly_Debt_expenses}')
-
-        # dependent label
-        dependent_label = QtWidgets.QLabel(self)
-        dependent_label.setFixedSize(QSize(280, 50))
-        dependent_label.setFont(QtGui.QFont('Arial', 12))
-        dependent_label.setText(f'Dependents: {dependent_list}')
+        debt_button.setStyleSheet("background-color : lightgrey")
         
-        Label_layout = QGridLayout()
-        Label_layout.addWidget(income_label, 0, 0)
-        Label_layout.addWidget(asset_label, 0, 1)
-        Label_layout.addWidget(transportation_label, 1, 0)
-        Label_layout.addWidget(housing_label, 1, 1)
-        Label_layout.addWidget(debts_label, 2, 0)
-        Label_layout.addWidget(dependent_label, 2, 1)
-        Label_layout.addWidget(QPushButton('Explain These numbers to me' , clicked = self.Explanation))
-        Label_layout.addWidget(QPushButton('Detailed Report' , clicked = self.detailed_info))
+        # creating Explanation button
+        Vocabulary = QPushButton()
+        Vocabulary.setText("Vocabulary")
+        Vocabulary.setFont(QtGui.QFont('Arial', 12))
+        Vocabulary.clicked.connect(self.Vocabulary)
+        Vocabulary.setStyleSheet("background-color : lightgrey")
 
+        # button to display current situation
+        Current = QPushButton()
+        Current.setText("My Financial Picture")
+        Current.setFont(QtGui.QFont('Arial', 12))
+        Current.clicked.connect(self.Nothing_changes)
+        Current.setStyleSheet("background-color : lightgrey")
+
+        # button to simulate situation of buying a house
+        Buying_House = QPushButton()
+        Buying_House.setText('Buying House')
+        Buying_House.setFont(QtGui.QFont('Arial', 12))
+        Buying_House.clicked.connect(self.Buying_House)
+        Buying_House.setStyleSheet("background-color : lightgrey")
+
+        # button to simulate situation of getting more assets
+        More_Assets = QPushButton()
+        More_Assets.setText('Receive More Assets')
+        More_Assets.setFont(QtGui.QFont('Arial', 12))
+        More_Assets.clicked.connect(self.MoreAssets_Event)
+        More_Assets.setStyleSheet("background-color : lightgrey")
+
+        # button to simulate situation of getting more assets
+        Paying_Debts = QPushButton()
+        Paying_Debts.setText('Paying Debts')
+        Paying_Debts.setFont(QtGui.QFont('Arial', 12))
+        Paying_Debts.clicked.connect(self.PayingOff_Debts)
+        Paying_Debts.setStyleSheet("background-color : lightgrey")
+        
+        # Switch Jobs button
+        Switch_Jobs = QPushButton()
+        Switch_Jobs.setText('Switch Jobs')
+        Switch_Jobs.setFont(QtGui.QFont('Arial', 12))
+        Switch_Jobs.clicked.connect(self.New_Income)
+        Switch_Jobs.setStyleSheet("background-color : lightgrey")
+
+        # Losing Jobs button
+        Lose_Job = QPushButton()
+        Lose_Job.setText('Lose Job')
+        Lose_Job.setFont(QtGui.QFont('Arial', 12))
+        Lose_Job.clicked.connect(self.Losing_Job)
+        Lose_Job.setStyleSheet("background-color : lightgrey")
+
+        # Buying car button
+        Buying_Car = QPushButton()
+        Buying_Car.setText('Buying Car')
+        Buying_Car.setFont(QtGui.QFont('Arial', 12))
+        Buying_Car.clicked.connect(self.Buying_Car)
+        Buying_Car.setStyleSheet("background-color : lightgrey")
+
+        # More debts button
+        More_Debts = QPushButton()
+        More_Debts.setText('Get More Debts')
+        More_Debts.setFont(QtGui.QFont('Arial', 12))
+        More_Debts.clicked.connect(self.Getting_Debts)
+        More_Debts.setStyleSheet("background-color : lightgrey")
+
+        # More debts button
+        Cash_Expendeture = QPushButton()
+        Cash_Expendeture.setText('Unexpecte Cash Expendeture')
+        Cash_Expendeture.setFont(QtGui.QFont('Arial', 12))
+        Cash_Expendeture.clicked.connect(self.Unexpected_Event)
+        Cash_Expendeture.setStyleSheet("background-color : lightgrey")
+
+        # Log out button
+        Log_out = QtWidgets.QPushButton(self)
+        Log_out.setFont(QtGui.QFont("Arial", 12))
+        Log_out.setStyleSheet("background-color : lightgrey")
+        Log_out.setText('Log out')
+        Log_out.clicked.connect(self.closing)
+        Log_out.setFixedSize(QSize(100, 30))
+
+        # Exit button
+        Exit = QtWidgets.QPushButton(self)
+        Exit.setFont(QtGui.QFont("Arial", 12))
+        Exit.setStyleSheet("background-color : lightgrey")
+        Exit.setText('Exit')
+        Exit.clicked.connect(closing)
+        Exit.setFixedSize(QSize(100, 30))
+
+        #--------CREATING LAYOUTS-----------------------
+
+        # creating layout for labels and info buttons
+        Label_layout = QGridLayout()
+        Label_layout.addWidget(Vocabulary, 3, 0)
+
+        # creating layout for function buttons
         button_layout = QHBoxLayout()
         button_layout.addWidget(assets_button)
         button_layout.addWidget(dependents_button)
@@ -462,17 +628,17 @@ class Financial_box(QtWidgets.QWidget):
         button_layout.addWidget(debt_button)
 
         button_layout2 = QHBoxLayout()
-        button_layout2.addWidget(QPushButton('Nothing Changes' , clicked = self.Nothing_changes))
-        button_layout2.addWidget(QPushButton('Buying House', clicked = self.Buying_House))
-        button_layout2.addWidget(QPushButton('Receive More Assets', clicked = self.MoreAssets_Event))
-        button_layout2.addWidget(QPushButton('Payoff Debts', clicked = self.PayingOff_Debts))
+        button_layout2.addWidget(Current)
+        button_layout2.addWidget(Buying_House)
+        button_layout2.addWidget(More_Assets)
+        button_layout2.addWidget(Paying_Debts)
 
         button_layout3 = QHBoxLayout()
-        button_layout3.addWidget(QPushButton('Switch Jobs' , clicked = self.New_Income))
-        button_layout3.addWidget(QPushButton('Lose Job', clicked = self.Losing_Job))
-        button_layout3.addWidget(QPushButton('Buying Car', clicked = self.Buying_Car))
-        button_layout3.addWidget(QPushButton('Get More Debts', clicked = self.Getting_Debts))
-        button_layout3.addWidget(QPushButton('Unexpected Negative Balance', clicked = self.Unexpected_Event))
+        button_layout3.addWidget(Switch_Jobs)
+        button_layout3.addWidget(Lose_Job)
+        button_layout3.addWidget(Buying_Car)
+        button_layout3.addWidget(More_Debts)
+        button_layout3.addWidget(Cash_Expendeture)
         
         # Hypotetical label
         Hypotetical = QLabel(self)
@@ -480,8 +646,8 @@ class Financial_box(QtWidgets.QWidget):
         Hypotetical.setText('Where I would be in six months if I...')
 
         button_layout4 = QHBoxLayout()
-        button_layout4.addWidget(QPushButton('Log out', clicked = self.closing))
-        button_layout4.addWidget(QPushButton('Exit', clicked = closing))
+        button_layout4.addWidget(Log_out)
+        button_layout4.addWidget(Exit)
         
         # layout with with buttons and lables
         LabelBUtton_layout = QVBoxLayout()
@@ -495,7 +661,6 @@ class Financial_box(QtWidgets.QWidget):
         #Creating the layout manager
         self.layout_manager = QVBoxLayout()
         self.layout_manager.addLayout(LabelBUtton_layout, 50)
-        self.layout_manager.addWidget(add_Graph())
         self.setLayout(self.layout_manager)
         
         self.show()
@@ -555,7 +720,7 @@ class Financial_box(QtWidgets.QWidget):
         
         global Layout
         Layout = QGridLayout()
-        Layout.addWidget(QLabel('Enter The Amount that you are planing to pay off, the APR and loan term'), 0, 0)
+        Layout.addWidget(QLabel('Enter The Amount that you are planing to pay down, the APR and loan term'), 0, 0)
         Layout.addWidget(QLabel('Balance'), 1, 0)
         Layout.addWidget(self.Balance, 1, 1)
         Layout.addWidget(QLabel('Rate'), 2, 0)
@@ -698,7 +863,8 @@ class Financial_box(QtWidgets.QWidget):
         Window = QtWidgets.QWidget()
         Window.setLayout(Layout)
 
-        Interactive_layout.addWidget(Window)    
+        Interactive_layout.addWidget(Window) 
+
     #defining unexpected event
     def Unexpected_Event(self):
         """Creates a dialog window for Unexpected event"""
@@ -759,12 +925,89 @@ class Financial_box(QtWidgets.QWidget):
 
         global Interactive_layout
         global Func_Type
-       
-        Func_Type = 'Nothing Changes'
-        self.close()
 
-        #Brings the graph to the front
-        Interactive_layout.addWidget(add_Graph())
+        Func_Type = 'Nothing Changes'
+
+        # income label
+        income_label = QtWidgets.QLabel(self)
+        income_label.setFixedSize(QSize(280, 50))
+        income_label.setFont(QtGui.QFont('Arial', 12))
+        income_label.setText(f'Monthly income: {Monthly_Income} ')
+
+        # asset label 
+        asset_label = QtWidgets.QLabel(self)
+        asset_label.setFixedSize(QSize(280, 50))
+        asset_label.setFont(QtGui.QFont('Arial', 12))
+        asset_label.setText(f'Total assets: {Total_assets}')
+
+        # transportation label 
+        transportation_label = QtWidgets.QLabel(self)
+        transportation_label.setFixedSize(QSize(280, 50))
+        transportation_label.setFont(QtGui.QFont('Arial', 12))
+        transportation_label.setText(f'Monthly transportation expenses: {Monthly_transportation_expenses}')
+
+        # housing label 
+        housing_label = QtWidgets.QLabel(self)
+        housing_label.setFixedSize(QSize(280, 50))
+        housing_label.setFont(QtGui.QFont('Arial', 12))
+        housing_label.setText(f'Monthly housing expenses: {Monthly_housing_expenses}')
+
+        # debts label 
+        debts_label = QtWidgets.QLabel(self)
+        debts_label.setFixedSize(QSize(280, 50))
+        debts_label.setFont(QtGui.QFont('Arial', 12))
+        debts_label.setText(f'Total monthly debt obligations: {Monthly_Debt_expenses}')
+
+        # dependent label
+        dependent_label = QtWidgets.QLabel(self)
+        dependent_label.setFixedSize(QSize(280, 50))
+        dependent_label.setFont(QtGui.QFont('Arial', 12))
+        dependent_label.setText(f'Dependents: {dependent_list}')
+
+        # back button
+        back = QtWidgets.QPushButton(self)
+        back.setFont(QtGui.QFont("Arial", 12))
+        back.setStyleSheet("background-color : lightgrey")
+        back.setText('Back')
+        back.clicked.connect(self.Back)
+        back.setFixedSize(QSize(100, 30))
+
+        # Explanation button
+        Explanation = QtWidgets.QPushButton(self)
+        Explanation.setFont(QtGui.QFont("Arial", 12))
+        Explanation.setStyleSheet("background-color : lightgrey")
+        Explanation.setText('Explain these numbers')
+        Explanation.clicked.connect(self.Explanation)
+        Explanation.setFixedSize(QSize(200, 30))
+
+         # creating detail report button
+        Detailed = QPushButton()
+        Detailed.setText("Detailed Report")
+        Detailed.setFont(QtGui.QFont('Arial', 12))
+        Detailed.clicked.connect(self.detailed_info)
+        Detailed.setStyleSheet("background-color : lightgrey")
+        Explanation.setFixedSize(QSize(200, 30))
+
+        global Layout
+        Layout = QGridLayout()
+        Layout.addWidget(income_label, 0, 0)
+        Layout.addWidget(asset_label, 0, 1)
+        Layout.addWidget(transportation_label, 1, 0)
+        Layout.addWidget(housing_label, 1, 1)
+        Layout.addWidget(debts_label, 2, 0)
+        Layout.addWidget(dependent_label, 2, 1)
+        Layout.addWidget(add_Graph(), 3, 0 , 5, 2)
+        Layout.addWidget(Detailed, 8, 0)
+        Layout.addWidget(Explanation, 8, 1)
+        Layout.addWidget(back, 9, 0)  
+
+        global Window
+        Window = QtWidgets.QWidget()
+        Window.setLayout(Layout)
+
+        Interactive_layout.addWidget(Window)
+       
+        self.close()
     
     # defining New Income
     def  New_Income(self):
@@ -963,6 +1206,40 @@ class Financial_box(QtWidgets.QWidget):
         global Interactive_layout 
         Interactive_layout.addWidget(add_Unsecured_Debts())
 
+    
+    def Vocabulary(self):
+        """Minifinacial Dictionary"""
+        text = "Data from Oxford Languages and Investopedia\n\n\n"
+        text += "Assets: a useful or valuable thing, person, or quality.\n\n"
+        text += "Dependants(financial): a person who relies on another, especially a family member, for financial support.\n\n"
+        text += "Income: money received, especially on a regular basis, for work or through investments.\n\n"
+        text += "Unsecured Debts:  loans that are not backed by collateral.\n\n"
+        text += "Retirement account: retirement savings accounts with tax advantages.\n\n"
+        text += "Face value: the value printed or depicted on a coin, banknote, postage stamp, ticket, etc.\n\n" 
+        text += "Treasury Note: a note issued by the US Treasury for use as currency.\n\n"
+        text += "Stocks: security that represents the ownership of a fraction of the issuing corporation.\n\n"
+        text += "HOA dues: homeowners fees for repairs, upkeep, and improvements in the neighborhood.\n\n"
+        text += "Property Insurance: financial reimbursement to the owner or renter of a structure and \n"
+        text += "its contents in case there is damage or theft.\n\n"
+        text += "APR: yearly interest generated by a sum that's charged to borrowers or paid to investors.\n\n"
+        text += "Loan Term: loans repayment period.\n\n"
+        text += "Finance(verb) provide funding for (a person or enterprise).\n\n"
+        text += "Pay Down: reduction in the overall debt achieved by a company, a government, or a consumer.\n\n"
+        text += "\n"
+        text += "\n"
+        text += "\n"
+        text += "\n"
+        text += "\n"
+
+        msg = QtWidgets.QMessageBox(self)
+        msg.setWindowTitle('Definiton  of Terms in Order Apearance')
+        msg.setText(text)
+        msg.setIcon(QMessageBox.Information)
+        msg.setStyleSheet("background-color : lightgrey")
+        x = msg.exec_()
+
+
+    
     def Explanation(self):
         """shows explanation"""
         
@@ -974,7 +1251,12 @@ class Financial_box(QtWidgets.QWidget):
         text += "Unsecured Debts: Interest is also included in the monthly payment, and for credit cards,\n" 
         text += "the monthly payment is estimated aiming to pay off the balance in three years\n"
 
-        QtWidgets.QMessageBox.information(self, 'Explanation', text)
+        msg = QtWidgets.QMessageBox(self)
+        msg.setWindowTitle('Explain these Numbers')
+        msg.setText(text)
+        msg.setIcon(QMessageBox.Information)
+        msg.setStyleSheet("background-color : lightgrey")
+        x = msg.exec_()
 
     def detailed_info(self):
         """Shows detailed info"""
@@ -1067,7 +1349,12 @@ class Financial_box(QtWidgets.QWidget):
             if debts_array[28] != 0:
                 text += "  Loan4 Card1 Monthly Payment: " + str(debts_array[28]) + '\n'
     
-        QtWidgets.QMessageBox.information(self, 'Detailed Information', text)
+        msg = QtWidgets.QMessageBox(self)
+        msg.setWindowTitle('Detailed Report')
+        msg.setText(text)
+        msg.setIcon(QMessageBox.Information)
+        msg.setStyleSheet("background-color : lightgrey")
+        x = msg.exec_()
     
     def input_loader(self, file):
         """This function loads current input"""     
@@ -1177,9 +1464,9 @@ class add_Graph(QtWidgets.QWidget):
         layout_info = QVBoxLayout()
 
         #if-elif-else text generator
-        text = f'Your projected accumulated capital if your situation does not change  is {round(months[6], 2)}.\n'
+        text = f'Your projected accumulated balance if your situation does not change  is {round(months[6], 2)}.\n'
         if Func_Type == 'Different Income':
-            text += f'If you switch jobs your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f'If you switch jobs your projected accumulated balance for the six months is {round(months1[6], 2)}.\n'
             if months[6] < months1[6]:
                 text += f'This is better than your current situation.\n'
                 if months1[6] > 0 and  Monthly_Debt_expenses > 0:
@@ -1195,7 +1482,7 @@ class add_Graph(QtWidgets.QWidget):
                 text += "Your financial situation would be worse if you switch jobs.\n"
                 text += "However money should not be the main or only reason for your decision.\n"
         elif Func_Type == 'Lose Job':
-            text += f'If you lose your job your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f'If you lose your job your projected accumulated balance for the six months is {round(months1[6], 2)}.\n'
             text += f"Your total assets is {Total_assets}.\n"
             how_long = 0
             if Liabilities > 0:
@@ -1204,7 +1491,7 @@ class add_Graph(QtWidgets.QWidget):
                 text += "You have enough assets to afford this period. You can take a break if you want to.\n"
             
             elif how_long > 0:  
-                    text += f"You have enough assets to afford {how_long} months. Think about your situaation carefuly.\n"
+                    text += f"You have enough assets to afford {how_long} months. Think about your situation carefuly.\n"
             else:
                 text += "You do not have enough assets to afford a month. " 
                 text += "You should start looking for another job asap.\n"
@@ -1226,7 +1513,7 @@ class add_Graph(QtWidgets.QWidget):
         elif Func_Type == 'MoreAssets':
             text += f"You are receiving {amount}. This are great News!!!"
             if months[6] < 0:
-                text += f"However do not forget that your proyected accumulated capital \n"
+                text += f"However do not forget that your proyected accumulated balance \n"
                 text += f"for the next six months is negative."
                 if amount > abs(months[6]) :
                     text += f"You can cover this deficit with this amount without changing \n "
@@ -1244,7 +1531,7 @@ class add_Graph(QtWidgets.QWidget):
             else:
                 text += "Your financial situation is in a good shape just do not forget to save some.\n"
         elif Func_Type == 'More Debt':
-            text += f'Your projected accumulated capital if you get this loan is {round(months1[6], 2)}.\n'
+            text += f'Your projected accumulated balance if you get this loan is {round(months1[6], 2)}.\n'
             if Total_assets > 0:
                 f"You should consider using your assets if you can before getting this loan.\n"
             if months[6]  < 0:
@@ -1255,9 +1542,9 @@ class add_Graph(QtWidgets.QWidget):
                     "\n"
                 text += "Using the money to cover your monthly deficit is the best idea.\n"
             elif months[6] > 0 and months1[6] < 0:
-                text += "This loan will nearly or actually create a monthly deficit that you wiould not have otherwise.\n"
+                text += "This loan will nearly or actually create a monthly deficit that you would not have otherwise.\n"
         elif Func_Type == 'Pay off Debt':
-            text += f'Your projected accumulated capital if you paritally or totally pay off your debts is {round(months1[6], 2)}.\n'
+            text += f'Your projected accumulated balance if you paritally or totally pay off your debts is {round(months1[6], 2)}.\n'
             if amount > Monthly_Debt_expenses:
                 text += "Remember that you cannot pay more than what you owe so the rest goes toward your assets.\n"
             text += f'Paying of your debts is good for your financial health.\n'
@@ -1270,7 +1557,7 @@ class add_Graph(QtWidgets.QWidget):
                 text += f"One last consideration is that your assets are low, you may want to put some money toward your assets \n "    
                 text += "in case you need it in the future even though this means paying less debts.\n"
         elif Func_Type == 'Buying House':
-            text += f'If you buy a new house your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f'If you buy a new house your projected accumulated balance for the six months is {round(months1[6], 2)}.\n'
             text += f"Your new monthly housing expenses would be {round(amount, 2)}.\n"
             if  amount - Monthly_housing_expenses  > 50:
                 text += "This is more than your current monthly housing expenses.\n"
@@ -1287,7 +1574,7 @@ class add_Graph(QtWidgets.QWidget):
                 text += "definitively a great decision. However money should not be the only factor to consider.\n"
             
         elif Func_Type == 'Buying Car':
-            text += f'If you change your car your projected accumulated capital for the six months is {round(months1[6], 2)}.\n'
+            text += f'If you change your car your projected accumulated balance for the six months is {round(months1[6], 2)}.\n'
             text += f"Your new monthly transportation expenses would be {round(amount, 2)}.\n"
             if  amount - Monthly_transportation_expenses  > 50:
                 text += "This is more than your current monthly transportation expenses.\n"
@@ -1930,7 +2217,7 @@ class add_Assets(QtWidgets.QWidget):
         # saving bonds label
         self.bonds_label = QtWidgets.QLabel(self)
         self.bonds_label.move(20, 110)
-        self.bonds_label.setText('Total face value of serie I, serie EE treasure notes or other bonds:')
+        self.bonds_label.setText('Total face value of serie I, serie EE treasury notes or other bonds:')
         
         # saving bonds line edit
         self.bonds_line = QtWidgets.QLineEdit(self)
