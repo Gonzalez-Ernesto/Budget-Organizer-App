@@ -98,3 +98,15 @@ Button 5 allows the introduction of information related to income. Currently, on
 ![create account button](https://user-images.githubusercontent.com/105956722/233920118-4237c41e-ba6f-48bc-b080-f6acd08ad014.PNG)
 
 ![create account button](https://user-images.githubusercontent.com/105956722/233920064-f3897a4a-ef1f-4623-a5bc-71d704bf855e.PNG)
+
+Button 6 allows the introduction of unsecured debts. If the meaning of this is confusing, clarification can be found in the vocabulary. The widget that follows when the button is clicked allows the introduction of information related to credit cards and loans. However, it falls short in allowing the user to name the debt or to introduce more than eight in total. Improving these is a good idea for contribution.
+
+![create account button](https://user-images.githubusercontent.com/105956722/233920880-c47463d4-4df5-4c2c-9184-861202d727d3.PNG)
+
+![create account button](https://user-images.githubusercontent.com/105956722/233920976-4fa0fd8e-cde5-4614-a5be-d022bc04b984.PNG)
+
+SECTION 2
+
+![create account button](https://user-images.githubusercontent.com/105956722/233922163-ca73d6ce-5e02-4371-a9dd-2b5b15cede30.PNG)
+
+![create account button](https://user-images.githubusercontent.com/105956722/233922462-af16245b-3f65-4ddd-8af0-d20ab5635886.PNG)
