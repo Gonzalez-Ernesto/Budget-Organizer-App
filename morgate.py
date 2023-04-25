@@ -886,7 +886,7 @@ class Financial_box(QtWidgets.QWidget):
         # Term label
         Term_label = QLabel()
         Term_label.setFont(QtGui.QFont("Arial", 12))
-        Term_label.setText('Mortgage Term')
+        Term_label.setText('Mortgage Term (in months)')
 
         # Accept button
         Accept = QtWidgets.QPushButton(self)
@@ -1827,7 +1827,7 @@ class add_Graph(QtWidgets.QWidget):
         layout_info = QVBoxLayout()
 
         #if-elif-else text generator
-        text = f'Your projected accumulated balance if your situation does not change  is {round(months[6], 2)}.\n'
+        text = f'Your projected accumulated balance for the next six months if your situation does not change  is {round(months[6], 2)}.\n'
         if Func_Type == 'Different Income':
             text += f'If you switch jobs your projected accumulated balance for the six months is {round(months1[6], 2)}.\n'
             if months[6] < months1[6]:
