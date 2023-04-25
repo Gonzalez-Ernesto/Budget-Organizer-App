@@ -20,8 +20,8 @@ Although the financial language used in this app could seem complicated, it is l
 
 ## Lessons Learned
 
-This project was meant to be the capstone project of the Python Developer program at NcLab. I could proudly say that the NClab program gave me all the tools to implement the functionality of this app, and avoiding an Object Oriented Design was a priority to prove that although the introductory  Python Developer Course does not dive into OOP and other topics like resources and data structure, still offer not only the foundation to learn those advance concepts quickly but a set of tools to be successful in the industry starting at entry-level positions.
-	Implementing the interface was the most challenging part of this project. Not using the PYQT5 editor was intentional for the same learning purpose described early; however, this approach and avoiding OOP design were costly in several ways. The first and most noticeable consequence was an interface that needed to be updated and attractive. At the implementation level, the most significant consequence was that the code grew exponentially to the order of thousands of lines, making it extremely hard for only one developer to debug and maintain the code.
+This project was meant to be the capstone project of the Python Developer program at NcLab. I could proudly say that the NClab program gave me all the tools to implement the functionality of this app, and avoiding an Object Oriented Design was a priority to prove that although the introductory  Python Developer Course does not dive into OOP and other topics like resources management and data structure, it offers not only the foundation to learn those advance concepts quickly but a set of tools to be successful in the industry starting at entry-level positions.
+	Implementing the interface was the most challenging part of this project. Not using the PYQT5 editor was intentional for the same learning purpose described early; however, this approach and avoiding OOP design were costly in several ways. The first and most noticeable consequence was an interface that needs to be updated to make it more friendly and attractive. At the implementation level, the most significant consequence was that the code grew exponentially to the order of thousands of lines, making it extremely hard for only one developer to debug and maintain.
     Lastly, since I did not have previous experience with PYQT5, the initial design had to be modified more than once, reaching improvisation more than once.	
 
 ## How to Use It
@@ -106,7 +106,51 @@ Button 6 allows the introduction of unsecured debts. If the meaning of this is c
 ![create account button](https://user-images.githubusercontent.com/105956722/233920976-4fa0fd8e-cde5-4614-a5be-d022bc04b984.PNG)
 
 SECTION 2
+Section 2 only has the "My Financial Picture" button.  
 
 ![create account button](https://user-images.githubusercontent.com/105956722/233922163-ca73d6ce-5e02-4371-a9dd-2b5b15cede30.PNG)
 
+When this button is clicked, the widget shown below will appear. 
+
 ![create account button](https://user-images.githubusercontent.com/105956722/233922462-af16245b-3f65-4ddd-8af0-d20ab5635886.PNG)
+
+This widget will display all the financial information the user has input. For a better understanding of this widget, it will be divided into three parts. However, it will be explained in one block.
+
+Part 1 summarizes the information the user entered using the six buttons from SECTION 1. These numbers will be confusing at first. To better understand how these numbers are calculated, the button " Explain these Numbers" from Part 3 could be clicked, and a message box will appear about how this is done. It would look like the one shown below.
+
+![create account button](https://user-images.githubusercontent.com/105956722/234183365-3fc4e4dc-c36d-41d2-9961-1eead2b7ffb7.PNG)
+
+If the user wants to see all the information entered at once, this is achieved by clicking the "Detailed Report" button from Part Three, and the following message box will appear.
+
+![create account button](https://user-images.githubusercontent.com/105956722/234183745-0feda7a8-ca65-4733-aab1-be41976b3b4e.PNG)
+
+In order to avoid overloading, the user fields where the input is equal to zero are not displayed on the message.
+
+Part 2 shows a linear graph representing hwhere the user's balance will be in six months if the current situation does not change, this is particulary useful for those living day by day and this insight could be a good suggestion to change the current course if the projected balance is not good.
+
+SECTION 3
+
+Things get more interesting in this section since these functionalities offer a good insight into the financial impact of any of these situations. However, to avoid making this section interminably long, only one functionality will be covered in this tutorial since all of them are similar in the way the input is entered and the output is displayed.
+
+![create account button](https://user-images.githubusercontent.com/105956722/234186129-c069ed47-ba2f-40ce-bd52-0ac0d1e224b0.PNG)
+
+If the marked button is clicked the following widget will appear.
+
+![create account button](https://user-images.githubusercontent.com/105956722/234189113-f636f7d4-e50b-40d0-81df-41807c7462f2.PNG)
+
+	In this particular case, the function called is "Buying a New House"( used as the primary residence.) It is important to remember to whom this app is dedicated. It is not suitable for landlords, investors, or people who, by their own merit, have placed themself outside of low-income hourly workers' reality.
+    For this tutorial, the user intends to buy a house worth $350,000, and it will finance $300,000 with an APR of 5% for 30 years. The reason why the value is requested has to do with including Primary Mortgage Insurance in the Monthly Payment.
+    
+  ![create account button](https://user-images.githubusercontent.com/105956722/234189352-3db7586c-efc7-476b-9156-d9af9326bca2.PNG)
+  
+  The above widget appears after the Accept button is clicked. It shows in the graph how taking this financial step will compare to the current situation for the next six months. Also, this comparison is explained in detail below the chart. This feedback is unique depending on the actual situation and the planned step.
+  
+  With slight variations, the rest of the buttons in this section will behave similarly.
+  
+  Section 4 is just the vocabulary for the App and Section 5 is a to log out or exit the app.
+  
+  ## How to Contribute
+    
+    
+
+
