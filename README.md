@@ -150,6 +150,29 @@ If the marked button is clicked the following widget will appear.
   Section 4 is just the vocabulary for the App and Section 5 is a to log out or exit the app.
   
   ## How to Contribute
+  
+  If contributing to this project is something that you would like to do, there are numerous ways to improve this app. Several issues were addressed in the section on How to use it, and this could be a good starting point. As far as I know, I found an issue when entering the dependents that made the app crash; however, I have not been able to reproduce it, and it is still unfixed. I have not found any similar issues related to inputs. If anyone with experience with Pyqt5 would like to contribute to improving the interface and the user experience, that would be great.
+
+The project is 100% in Python. Being familiar with the language is necessary; navigating through the code is highly challenging. If a contributor has Object Oriented Programing Knowledge in Python and wants to implement OOD, go ahead. 
+In any case, submit a pull request. 
+Here are some helpful links to install the necessary environment locally if it is something that you do not have.
+These are just the ones I used; the options are numerous.
+
+For installing Visual Studio
+https://visualstudio.microsoft.com/vs/community/
+
+for installing Python for different OS
+https://pypi.org/project/PyQt5/
+
+for installing PyQt5 for Pyhton
+https://pypi.org/project/PyQt5/
+
+For installing Matplotlib
+https://pypi.org/project/pandas/
+
+For installing Pandas
+https://pypi.org/project/pandas/
+
     
     
 
