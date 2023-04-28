@@ -77,7 +77,7 @@ Button 2 allows the user to introduce information related to transportation. How
 
 ![create account button](https://user-images.githubusercontent.com/105956722/233916070-0332c41e-0838-4f72-98e6-717aec2e46fe.PNG)
 
-As with the other buttons of section 1 filling up the information should be easy. One important feature addedd to the widged transportation is the marked text which shows the calculated monthly maintenace and gas cost. however these numbers were calculated using national dta which is extremely unaccurate considering the gas price gap among different states.Another drawnback is that this information is not updated in real timeit is necessary to press the accept button.
+As with the other buttons of section 1 filling up the information should be easy. One important feature addedd to the widged transportation is the marked text which shows the calculated monthly maintenace and gas cost. however these numbers were calculated using national data which is extremely unaccurate considering the gas price gap among different states.Another drawnback is that this information is not updated in real timeit is necessary to press the accept button.
 
 ![create account button](https://user-images.githubusercontent.com/105956722/233916235-fb8b021e-77bd-4685-b766-19868ba0acfe.PNG)
 
