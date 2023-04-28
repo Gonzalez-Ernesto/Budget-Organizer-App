@@ -168,7 +168,7 @@ for installing PyQt5 for Pyhton
 https://pypi.org/project/PyQt5/
 
 For installing Matplotlib
-https://pypi.org/project/pandas/
+https://pypi.org/project/matplotlib/
 
 For installing Pandas
 https://pypi.org/project/pandas/
