@@ -126,7 +126,7 @@ If the user wants to see all the information entered at once, this is achieved b
 
 In order to avoid overloading, the user fields where the input is equal to zero are not displayed on the message.
 
-Part 2 shows a linear graph representing hwhere the user's balance will be in six months if the current situation does not change, this is particulary useful for those living day by day and this insight could be a good suggestion to change the current course if the projected balance is not good.
+Part 2 shows a linear graph representing where the user's balance will be in six months if the current situation does not change, this is particulary useful for those living day by day and this insight could be a good suggestion to change the current course if the projected balance is not good.
 
 SECTION 3
 
