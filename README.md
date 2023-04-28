@@ -67,7 +67,7 @@ SECTION 1
 
 This section is where the User can input the financial situation and access this information anytime; This is the first step to organizing one's finances.
 
-Button 1 allows the User to introduce assets. Although this App falls short when considering, possible assets is a good starting point. Once the Assets button is clicked, the widget shown below will appear. Competing for the fields is a simple process that could be completed with the help of the vocabulary from section 4. the User can introduce the information on any field, and as long the accept button is clicked, the information will be saved even though not all fields are completed.
+Button 1 allows the User to introduce assets. Although this App falls short when considering, possible assets is a good starting point. Once the Assets button is clicked, the widget shown below will appear. Completing the fields is a simple process that could be completed with the help of the vocabulary from section 4. the User can introduce the information on any field, and as long the accept button is clicked, the information will be saved even though not all fields are completed.
 
 ![create account button](https://user-images.githubusercontent.com/105956722/233915391-945cdee1-b8e7-41cf-a89a-3068cae86817.PNG)
 
